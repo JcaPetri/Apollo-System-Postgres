@@ -1,0 +1,279 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysEntityFieldProperties_Tbl table
+-- Contains the columns/fields properties of each Entity/Table.
+-- Each field/column can have many properties, like DataType, Lenght, IsPrimaryKey, IsNotNull, etc.
+-- The primary key: are the union of the columns FieldPropertyIDn + EntityStructureIDn (TblFieldIDn + EntityIDn)  + BusinessUnitIDn
+-- The EntityStructureIDn has a FieldIDn + EntityIDn + BusinessUnitIDn primary key.
+
+/*
+-- Fields that the user cant't modify
+	-- System fields, this fields are defined by the MySql or Java system, the user can't modify them.
+			260		ID
+			261		IDNum
+			364		CreatedByIDn
+			365		LastModifiedByIDn
+            			366		OwnerIDn
+			367		DateCreated
+			368		DateTimeStamp
+			371		TableHistory
+
+	-- System fields, the user can modify them
+			363		StateIDn
+
+-- FieldPropertyIDn
+-- The field property define the types of properties that has the field/column.
+		37	FieldPropertyType		-- Scope = 3
+			DataType
+		2148	IsPrimaryKey		-- is a boolean type, 1 = true / 0 = false
+		2149	IsNotNull			-- is a boolean type, 1 = true / 0 = false
+		2150	IsIndex			-- is a boolean type, 1 = true / 0 = false
+		2151	IsBinary			-- is a boolean type, 1 = true / 0 = false
+		2152	IsAutoIncremental		-- is a boolean type, 1 = true / 0 = false
+		2153	IsGeneratedField		-- is a boolean type, 1 = true / 0 = false
+		2154	IsSystemGenerated	-- is a boolean type, 1 = true / 0 = false
+			IsOptionalField		-- is a boolean type, 1 = true / 0 = false
+		etc.
+
+-- If you want to set a field list, you must to combine some propertytypes
+Ejemplo:	Field		PropertyType		PropertyValue
+	ID		DataType			text
+             ID		ListBox			IDNum of the list (Red/Blue/etc)
+	The list can be exclusive, or the user can enter his own values
+*/
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- First create the sequence SysEntityFieldProperties_seq
+-- 
+DROP SEQUENCE IF EXISTS public."SysEntityFieldProperties_Seq" CASCADE;
+
+CREATE SEQUENCE public."SysEntityFieldProperties_Seq"
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public."SysEntityFieldProperties_Seq"
+    OWNER TO postgres;
+
+COMMENT ON SEQUENCE public."SysEntityFieldProperties_Seq"
+    IS 'The sequence SysEntityFieldProperties_seq generate the nextval of the IDNum';
+
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Second create the SysEntityFieldProperties_Tbl table
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public.SysEntityFieldProperties_Tbl
+DROP TABLE IF EXISTS public."SysEntityFieldProperties_Tbl" CASCADE;
+
+CREATE TABLE IF NOT EXISTS public."SysEntityFieldProperties_Tbl"
+(
+    "IDNum" integer NOT NULL DEFAULT nextval('"SysEntityFieldProperties_Seq"'::regclass),
+    "ID" uuid NOT NULL DEFAULT uuid_generate_v4 (),
+    "FieldPropertyIDn" integer NOT NULL,
+    "EntityStructureIDn" integer NOT NULL,
+    "BusinessUnitIDn" integer NOT NULL,
+    "FieldValueIDn" integer,
+    "FieldNumValue" real,
+    "FieldTextValue" character varying(250) COLLATE pg_catalog."default",
+    "StateIDn" smallint NOT NULL,
+    "CreatedByIDn" integer NOT NULL,
+    "LastModifiedByIDn" integer NOT NULL,
+    "OwnerIDn" integer NOT NULL,
+    "DateCreated" timestamp without time zone NOT NULL,
+    "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "TableHistory" text COLLATE pg_catalog."default",
+    CONSTRAINT "SptPk_IDNum" PRIMARY KEY ("IDNum"),
+    CONSTRAINT "SptUnique_ID" UNIQUE ("ID"),
+    CONSTRAINT "SptUnique_IDTblFieldPropTypeEntStrucBusinessUnit" UNIQUE ("FieldPropertyIDn", "EntityStructureIDn", "BusinessUnitIDn")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."SysEntityFieldProperties_Tbl"
+    OWNER to postgres;
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create the comments of the table fields elements
+-- 
+COMMENT ON TABLE public."SysEntityFieldProperties_Tbl"
+    IS 'Contains the columns/fields properties of each Entity/Table.
+Each field/column can have many properties, like DataType, Lenght, IsPrimaryKey, IsNotNull, etc.
+The primary key: are the union of the columns FieldPropertyIDn + EntityStructureIDn (TblFieldIDn + EntityIDn)  + BusinessUnitIDn
+The EntityStructureIDn has a FieldIDn + EntityIDn + BusinessUnitIDn primary key.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."IDNum"
+    IS 'The IDNum is the autoincrement number';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."ID"
+    IS 'The ID is the uniqueidentifier auto generated V4';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."FieldPropertyIDn"
+    IS 'The FieldPropertyIDn is the IDNum of the field property type. Link with the SysBaseElement_Tbl.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."EntityStructureIDn"
+    IS 'The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."BusinessUnitIDn"
+    IS 'The BusinessUnitIDn is the business unit that the articles belong.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."FieldValueIDn"
+    IS 'The FieldValueIDn is the IDNum of the property, when its come from the diccionary ArtDataElement.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."FieldNumValue"
+    IS 'The FieldNumValue is a numeric value of the property.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."FieldTextValue"
+    IS 'The FieldTextValue is a text value of the property, this value is not standar and can´t be multilanguage.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."StateIDn"
+    IS 'The StatedIDn is the IDNum that define if the record is enable or not.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."CreatedByIDn"
+    IS 'The CreatedByIDn is the IDNum of the user who created the record.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."LastModifiedByIDn"
+    IS 'The LastModifiedByIDn is the IDNum of the last user who modified the record.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."OwnerIDn"
+    IS 'The OwnerIDn is the IDNum of the record owner.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."DateCreated"
+    IS 'The DateCreated is the record creation datetime UTC.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."DateTimeStamp"
+    IS 'The DateTimeStamp is the datetime UTC of the last modification.';
+
+COMMENT ON COLUMN public."SysEntityFieldProperties_Tbl"."TableHistory"
+    IS 'The TableHistory contain then change history of each column.';
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create the comments of the constraint elements
+-- 
+COMMENT ON CONSTRAINT "SptPk_IDNum" ON public."SysEntityFieldProperties_Tbl"
+    IS 'The sequence ArtSysEntityFieldProperties_Tbl_seq generate the nextval';
+
+COMMENT ON CONSTRAINT "SptUnique_ID" ON public."SysEntityFieldProperties_Tbl"
+    IS 'Is the uniqueidentifier';
+
+COMMENT ON CONSTRAINT "SptUnique_IDTblFieldPropTypeEntStrucBusinessUnit" ON public."SysEntityFieldProperties_Tbl"
+    IS 'An property type can be unique for an entity structure (field + entity) and a business unit.';
+
+-- #########################################################################################################################################################################################
+-- Second create the trigger before insert
+--	Step 1: create the function before insert
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: public.SysEntityFieldPropertiesBeforeInsert_Tfnc()
+DROP FUNCTION IF EXISTS public."SysEntityFieldPropertiesBeforeInsert_Tfnc"() CASCADE;
+
+CREATE OR REPLACE FUNCTION public."SysEntityFieldPropertiesBeforeInsert_Tfnc"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the created date
+	IF NEW."DateCreated" IS NULL THEN 
+		NEW."DateCreated" := CURRENT_TIMESTAMP;
+	END IF;
+RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public."SysEntityFieldPropertiesBeforeInsert_Tfnc"()
+    OWNER TO postgres;
+
+COMMENT ON FUNCTION public."SysEntityFieldPropertiesBeforeInsert_Tfnc"()
+    IS 'Create the function to set de current timestamp for the datecreated field.
+	This funtion is used by the SysEntityFieldProperties_Tbl table before insert trigger.';
+
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--	Step 2: create the trigger before insert in the SysEntityFieldProperties table
+-- Trigger: SysEntityFieldPropertiesBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysEntityFieldPropertiesBeforeInsert_Trg" ON public."SysEntityFieldProperties_Tbl" CASCADE;
+
+CREATE TRIGGER "SysEntityFieldPropertiesBeforeInsert_Trg"
+    BEFORE INSERT
+    ON public."SysEntityFieldProperties_Tbl"
+    FOR EACH ROW
+    EXECUTE FUNCTION public."SysEntityFieldPropertiesBeforeInsert_Tfnc"();
+
+COMMENT ON TRIGGER "SysEntityFieldPropertiesBeforeInsert_Trg" ON public."SysEntityFieldProperties_Tbl"
+    IS 'Set the SysEntityFieldPropertiesBeforeInsert_Tfnc function, that makes datetime UTC of the DateCreated field';
+
+-- #########################################################################################################################################################################################
+-- Third create the trigger before update
+--	Step 1: create the function before update
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: public.SysEntityFieldPropertiesBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysEntityFieldPropertiesBeforeUpdate_Tfnc"() CASCADE;
+
+CREATE OR REPLACE FUNCTION public."SysEntityFieldPropertiesBeforeUpdate_Tfnc"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+DECLARE
+	v_TableHistory text;
+	v_TableHistoryOld text;
+BEGIN
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the DateTimeStamp
+	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the created date
+	IF NEW."TableHistory" = 'SetNull' THEN 
+		NEW."TableHistory" := NULL;
+	ELSEIF NEW."TableHistory" = 'SetOff' THEN
+		NEW."TableHistory" := OLD."TableHistory";
+	ELSE
+		v_TableHistoryOld := OLD."TableHistory";
+		v_TableHistory = '';
+		IF NEW."FieldPropertyIDn" <> OLD."FieldPropertyIDn" THEN v_TableHistory := OLD."FieldPropertyIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."EntityStructureIDn" <> OLD."EntityStructureIDn" THEN v_TableHistory := OLD."EntityStructureIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."BusinessUnitIDn" <> OLD."BusinessUnitIDn" THEN v_TableHistory := OLD."BusinessUnitIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."FieldValueIDn" <> OLD."FieldValueIDn" THEN v_TableHistory := OLD."FieldValueIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."FieldNumValue" <> OLD."FieldNumValue" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."FieldNumValue"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."FieldTextValue" <> OLD."FieldTextValue" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."FieldTextValue"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."StateIDn" <> OLD."StateIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."StateIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."CreatedByIDn" <> OLD."CreatedByIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."CreatedByIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."LastModifiedByIDn" <> OLD."LastModifiedByIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."LastModifiedByIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."OwnerIDn" <> OLD."OwnerIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."OwnerIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN v_TableHistory := CONCAT(v_TableHistory,'†',NEW."DateCreated"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."DateTimeStamp" <> OLD."DateTimeStamp" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."DateTimeStamp"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN
+			NEW."TableHistory" := v_TableHistory;
+		ELSE
+			NEW."TableHistory" := CONCAT(v_TableHistory,'‡',v_TableHistoryOld);
+		END IF;
+		
+	END IF;
+	RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public."SysEntityFieldPropertiesBeforeUpdate_Tfnc"()
+    OWNER TO postgres;
+
+COMMENT ON FUNCTION public."SysEntityFieldPropertiesBeforeUpdate_Tfnc"()
+    IS 'Create the function to set the new datetimestamp and the history of the record.
+	This funtion is used by the SysEntityFieldProperties_Tbl table before update trigger.';
+
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--	Step 2: create the trigger before update in the SysEntityFieldProperties_Tbl table
+-- Trigger: SysEntityFieldPropertiesBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysEntityFieldPropertiesBeforeUpdate_Trg" ON public."SysEntityFieldProperties_Tbl" CASCADE;
+
+CREATE TRIGGER "SysEntityFieldPropertiesBeforeUpdate_Trg"
+    BEFORE UPDATE 
+    ON public."SysEntityFieldProperties_Tbl"
+    FOR EACH ROW
+    EXECUTE FUNCTION public."SysEntityFieldPropertiesBeforeUpdate_Tfnc"();
+
+COMMENT ON TRIGGER "SysEntityFieldPropertiesBeforeUpdate_Trg" ON public."SysEntityFieldProperties_Tbl"
+    IS 'Set the SysEntityFieldPropertiesBeforeUpdate_Tfnc function, that makes datetime UTC and the record History.';
