@@ -1,0 +1,251 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysEntityStructure_Tbl table
+-- Contains the system structure. In this table you build the tables and java entities structures, with thiers column and fields.
+-- You must define all the properties of the entities.
+-- The primary key: are the union of the columns FieldIDn + EntityIDn + BusinessUnitIDn
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- First create the sequence SysEntityStructure_seq
+-- 
+DROP SEQUENCE IF EXISTS public."SysEntityStructure_Seq" CASCADE;
+
+CREATE SEQUENCE public."SysEntityStructure_Seq"
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public."SysEntityStructure_Seq"
+    OWNER TO postgres;
+
+COMMENT ON SEQUENCE public."SysEntityStructure_Seq"
+    IS 'The sequence SysEntityStructure_seq generate the nextval of the IDNum';
+
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Second create the SysEntityStructure_Tbl table
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public.SysEntityStructure_Tbl
+DROP TABLE IF EXISTS public."SysEntityStructure_Tbl" CASCADE;
+
+CREATE TABLE IF NOT EXISTS public."SysEntityStructure_Tbl"
+(
+    "IDNum" integer NOT NULL DEFAULT nextval('"SysEntityStructure_Seq"'::regclass),
+    "ID" uuid NOT NULL DEFAULT uuid_generate_v4 (),
+    "FieldIDn" integer NOT NULL,
+    "EntityIDn" integer NOT NULL,
+    "BusinessUnitIDn" integer NOT NULL,
+    "DataTypeIDn" integer NOT NULL,
+    "FieldOrder" integer NOT NULL,
+    "AdmitDefaultValue" boolean NOT NULL,
+    "FieldNotNull" boolean NOT NULL,
+    "StateIDn" smallint NOT NULL,
+    "CreatedByIDn" integer NOT NULL,
+    "LastModifiedByIDn" integer NOT NULL,
+    "OwnerIDn" integer NOT NULL,
+    "DateCreated" timestamp without time zone NOT NULL,
+    "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "TableHistory" text COLLATE pg_catalog."default",
+    CONSTRAINT "SesPk_IDNum" PRIMARY KEY ("IDNum"),
+    CONSTRAINT "SesUnique_ID" UNIQUE ("ID"),
+    CONSTRAINT "SesUnique_IDnFieldEntityBusinessUnit" UNIQUE ("FieldIDn", "EntityIDn", "BusinessUnitIDn")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."SysEntityStructure_Tbl"
+    OWNER to postgres;
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create the comments of the table fields elements
+-- 
+COMMENT ON TABLE public."SysEntityStructure_Tbl"
+    IS 'Contains the system structure. In this table you build the tables and java entities structures, with thiers column and fields.
+You must define all the properties of the entities.
+The primary key: are the union of the columns FieldIDn + EntityIDn + BusinessUnitIDn.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."IDNum"
+    IS 'The IDNum is the autoincrement number';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."ID"
+    IS 'The ID is the uniqueidentifier auto generated V4';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."FieldIDn"
+    IS 'The FieldIDn is the IDNum of the field/column of the entity. Link with the SysBaseElement_Tbl.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."EntityIDn"
+    IS 'The EntityIDn is the IDNum of the entity, 2=SysEntity or 4=SysTable. Link with the SysBaseElement_Tbl.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."BusinessUnitIDn"
+    IS 'The BusinessUnitIDn is the business unit that the general option fields articles belong.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."DataTypeIDn"
+    IS 'The DataTypeIDn is the IDNum of the type of data that you can enter in the field.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."FieldOrder"
+    IS 'The FieldOrder is an ascendent number to order the fields/columns. If the user don`t define, the system insert an autonumeric increment number.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."AdmitDefaultValue"
+    IS 'The AdmitDefaultValue, if the value is 1 the field admit the default value, otherwise not. This is to facilitate data insertion.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."FieldNotNull"
+    IS 'The FieldNotNull, if the value is 1 the field can`t be null, otherwise the null value is allowed.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."StateIDn"
+    IS 'The StatedIDn is the IDNum that define if the record is enable or not.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."CreatedByIDn"
+    IS 'The CreatedByIDn is the IDNum of the user who created the record.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."LastModifiedByIDn"
+    IS 'The LastModifiedByIDn is the IDNum of the last user who modified the record.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."OwnerIDn"
+    IS 'The OwnerIDn is the IDNum of the record owner.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."DateCreated"
+    IS 'The DateCreated is the record creation datetime UTC.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."DateTimeStamp"
+    IS 'The DateTimeStamp is the datetime UTC of the last modification.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."TableHistory"
+    IS 'The TableHistory contain then change history of each column.';
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create the comments of the constraint elements
+-- 
+COMMENT ON CONSTRAINT "SesPk_IDNum" ON public."SysEntityStructure_Tbl"
+    IS 'The sequence SysEntityStructure_seq generate the nextval';
+
+COMMENT ON CONSTRAINT "SesUnique_ID" ON public."SysEntityStructure_Tbl"
+    IS 'Is the uniqueidentifier';
+
+COMMENT ON CONSTRAINT "SesUnique_IDnFieldEntityBusinessUnit" ON public."SysEntityStructure_Tbl"
+    IS 'A field property can be unique for an Entity and a business unit.';
+
+-- #########################################################################################################################################################################################
+-- Second create the trigger before insert
+--	Step 1: create the function before insert
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: public.SysEntityStructureBeforeInsert_Tfnc()
+DROP FUNCTION IF EXISTS public."SysEntityStructureBeforeInsert_Tfnc"() CASCADE;
+
+CREATE OR REPLACE FUNCTION public."SysEntityStructureBeforeInsert_Tfnc"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the FieldOrder
+	IF NEW."FieldOrder" IS NULL THEN 
+		NEW."FieldOrder" := (SELECT COALESCE(MAX("FieldOrder"),0) + 1 FROM public."SysEntityStructure_Tbl" WHERE "EntityIDn" = NEW."EntityIDn");
+	END IF;
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the created date
+	IF NEW."DateCreated" IS NULL THEN 
+		NEW."DateCreated" := CURRENT_TIMESTAMP;
+	END IF;
+RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public."SysEntityStructureBeforeInsert_Tfnc"()
+    OWNER TO postgres;
+
+COMMENT ON FUNCTION public."SysEntityStructureBeforeInsert_Tfnc"()
+    IS 'Create the function to set de current timestamp for the datecreated field.
+	This funtion is used by the SysEntityStructure_Tbl table before insert trigger.';
+
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--	Step 2: create the trigger before insert in the SysEntityStructure table
+-- Trigger: SysEntityStructureBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysEntityStructureBeforeInsert_Trg" ON public."SysEntityStructure_Tbl" CASCADE;
+
+CREATE TRIGGER "SysEntityStructureBeforeInsert_Trg"
+    BEFORE INSERT
+    ON public."SysEntityStructure_Tbl"
+    FOR EACH ROW
+    EXECUTE FUNCTION public."SysEntityStructureBeforeInsert_Tfnc"();
+
+COMMENT ON TRIGGER "SysEntityStructureBeforeInsert_Trg" ON public."SysEntityStructure_Tbl"
+    IS 'Set the SysEntityStructureBeforeInsert_Tfnc function, that makes datetime UTC of the DateCreated field';
+
+-- #########################################################################################################################################################################################
+-- Third create the trigger before update
+--	Step 1: create the function before update
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: public.SysEntityStructureBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysEntityStructureBeforeUpdate_Tfnc"() CASCADE;
+
+CREATE OR REPLACE FUNCTION public."SysEntityStructureBeforeUpdate_Tfnc"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+DECLARE
+	v_TableHistory text;
+	v_TableHistoryOld text;
+BEGIN
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the DateTimeStamp
+	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the created date
+	IF NEW."TableHistory" = 'SetNull' THEN 
+		NEW."TableHistory" := NULL;
+	ELSEIF NEW."TableHistory" = 'SetOff' THEN
+		NEW."TableHistory" := OLD."TableHistory";
+	ELSE
+		v_TableHistoryOld := OLD."TableHistory";
+		v_TableHistory = '';
+		IF NEW."FieldIDn" <> OLD."FieldIDn" THEN v_TableHistory := OLD."FieldIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."EntityIDn" <> OLD."EntityIDn" THEN v_TableHistory := OLD."EntityIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."BusinessUnitIDn" <> OLD."BusinessUnitIDn" THEN v_TableHistory := OLD."BusinessUnitIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."DataTypeIDn" <> OLD."DataTypeIDn" THEN v_TableHistory := OLD."DataTypeIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."FieldOrder" <> OLD."FieldOrder" THEN v_TableHistory := OLD."FieldOrder"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."AdmitDefaultValue" <> OLD."AdmitDefaultValue" THEN v_TableHistory := OLD."AdmitDefaultValue"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."FieldNotNull" <> OLD."FieldNotNull" THEN v_TableHistory := OLD."FieldNotNull"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."StateIDn" <> OLD."StateIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."StateIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."CreatedByIDn" <> OLD."CreatedByIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."CreatedByIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."LastModifiedByIDn" <> OLD."LastModifiedByIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."LastModifiedByIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."OwnerIDn" <> OLD."OwnerIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."OwnerIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN v_TableHistory := CONCAT(v_TableHistory,'†',NEW."DateCreated"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."DateTimeStamp" <> OLD."DateTimeStamp" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."DateTimeStamp"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN
+			NEW."TableHistory" := v_TableHistory;
+		ELSE
+			NEW."TableHistory" := CONCAT(v_TableHistory,'‡',v_TableHistoryOld);
+		END IF;
+		
+	END IF;
+	RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public."SysEntityStructureBeforeUpdate_Tfnc"()
+    OWNER TO postgres;
+
+COMMENT ON FUNCTION public."SysEntityStructureBeforeUpdate_Tfnc"()
+    IS 'Create the function to set the new datetimestamp and the history of the record.
+	This funtion is used by the SysEntityStructure_Tbl table before update trigger.';
+
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--	Step 2: create the trigger before update in the SysEntityStructure_Tbl table
+-- Trigger: SysEntityStructureBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysEntityStructureBeforeUpdate_Trg" ON public."SysEntityStructure_Tbl" CASCADE;
+
+CREATE TRIGGER "SysEntityStructureBeforeUpdate_Trg"
+    BEFORE UPDATE 
+    ON public."SysEntityStructure_Tbl"
+    FOR EACH ROW
+    EXECUTE FUNCTION public."SysEntityStructureBeforeUpdate_Tfnc"();
+
+COMMENT ON TRIGGER "SysEntityStructureBeforeUpdate_Trg" ON public."SysEntityStructure_Tbl"
+    IS 'Set the SysEntityStructureBeforeUpdate_Tfnc function, that makes datetime UTC and the record History.';
