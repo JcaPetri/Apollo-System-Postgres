@@ -3,7 +3,8 @@
 -- Contains the entities information. 
 -- The entities exists since you create them in this table. 
 -- It's information, of what are they, are in the BaseElement_Tbl table.
--- The primary key: is entityIDn field and must be unique for each business unit.
+-- The primary key: is the union of EntityIDn + MicroserviceIDn + BusinessUnitID.
+-- When MicroserviceIDn = System, all microservices have acces to them.
 
 -- #########################################################################################################################################################################################
 -- First create the Table
@@ -14,6 +15,7 @@ DROP TABLE IF EXISTS public."SysEntity_Tbl" CASCADE;
 CREATE TABLE IF NOT EXISTS public."SysEntity_Tbl"
 (
     "EntityIDn" integer NOT NULL,
+    "MicroserviceIDn" integer NOT NULL,
     "BusinessUnitIDn" integer NOT NULL,
     "EntityTypeIDn" integer NOT NULL,
     "StateIDn" smallint NOT NULL,
@@ -24,7 +26,7 @@ CREATE TABLE IF NOT EXISTS public."SysEntity_Tbl"
     "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "TableHistory" text COLLATE pg_catalog."default",
     CONSTRAINT "SenPk_EntityIDn" PRIMARY KEY ("EntityIDn"),
-    CONSTRAINT "SenUnique_IDnEntityBusinessUnit" UNIQUE ("EntityIDn", "BusinessUnitIDn")
+    CONSTRAINT "SenUnique_IDnEntityMicroserviceBusinessUnit" UNIQUE ("EntityIDn", "MicroserviceIDn", "BusinessUnitIDn")
 )
 
 TABLESPACE pg_default;
@@ -38,10 +40,14 @@ ALTER TABLE IF EXISTS public."SysEntity_Tbl"
 COMMENT ON TABLE public."SysEntity_Tbl"
     IS 'Contains the entities information. 
 	The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
-	The primary key is entityIDn field and must be unique for each business unit.';
+	The primary key: is the union of EntityIDn + MicroserviceIDn + BusinessUnitID.
+	When MicroserviceIDn = System, all microservices have acces to them.';
 
 COMMENT ON COLUMN public."SysEntity_Tbl"."EntityIDn"
     IS 'The EntityIDn is the IDNum of the entity, 1=tSisEntity or 3=tSisTable. Link with the diccionary table - SysBaseElement.';
+
+COMMENT ON COLUMN public."SysRootElement_Tbl"."MicroserviceIDn"
+    IS 'The MicroserviceIDn is the IDNum of the microservice to which the entity belongs. If its value is System all microservices have access to it.';
 
 COMMENT ON COLUMN public."SysEntity_Tbl"."BusinessUnitIDn"
     IS 'The BusinessUnitIDn is the business unit that the entities belong. Link with the SysCompany.';
@@ -76,7 +82,7 @@ COMMENT ON COLUMN public."SysEntity_Tbl"."TableHistory"
 COMMENT ON CONSTRAINT "SenPk_EntityIDn" ON public."SysEntity_Tbl"
     IS 'The SenPk_EntityIDn came from the SysBaseElement, thats is a integer generated value.';
 
-COMMENT ON CONSTRAINT "SenUnique_IDnEntityBusinessUnit" ON public."SysEntity_Tbl"
+COMMENT ON CONSTRAINT "SenUnique_IDnEntityMicroserviceBusinessUnit" ON public."SysEntity_Tbl"
     IS 'An entity can be unique for a business unit.';
 
 -- #########################################################################################################################################################################################
@@ -153,6 +159,7 @@ BEGIN
 		v_TableHistoryOld := OLD."TableHistory";
 		v_TableHistory = '';
 		IF NEW."EntityIDn" <> OLD."EntityIDn" THEN v_TableHistory := OLD."EntityIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."MicroserviceIDn" <> OLD."MicroserviceIDn" THEN v_TableHistory := OLD."MicroserviceIDn"; ELSE v_TableHistory := '†'; END IF;
 		IF NEW."BusinessUnitIDn" <> OLD."BusinessUnitIDn" THEN v_TableHistory := OLD."BusinessUnitIDn"; ELSE v_TableHistory := '†'; END IF;
 		IF NEW."EntityTypeIDn" <> OLD."EntityTypeIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."EntityTypeIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW."StateIDn" <> OLD."StateIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."StateIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
