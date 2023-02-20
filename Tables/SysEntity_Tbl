@@ -5,15 +5,41 @@
 -- It's information, of what are they, are in the BaseElement_Tbl table.
 -- The primary key: is the union of EntityIDn + MicroserviceIDn + BusinessUnitID.
 -- When MicroserviceIDn = System, all microservices have acces to them.
+-- The System Entity is generated in the SysEntity_Tbl for a BusinessUnit and Microservice.
+-- The data is created in the BaseElement_Tbl in the System BusinessUnit, and is the same to all the microservice.
+-- When I create the entity, I define the business unit owner and the microservice it belongs to.
+
 
 -- #########################################################################################################################################################################################
--- First create the Table
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- First create the sequence SysEntity_seq
+-- 
+DROP SEQUENCE IF EXISTS public."SysEntity_Seq" CASCADE;
+
+CREATE SEQUENCE public."SysEntity_Seq"
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public."SysEntity_Seq"
+    OWNER TO postgres;
+
+COMMENT ON SEQUENCE public."SysEntity_Seq"
+    IS 'The sequence SysEntity_seq generate the nextval of the IDNum';
+
+
+-- #########################################################################################################################################################################################
+-- First create the SysEntityStructure_Tbl table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Table: public.SysEntity_Tbl
 DROP TABLE IF EXISTS public."SysEntity_Tbl" CASCADE;
 
 CREATE TABLE IF NOT EXISTS public."SysEntity_Tbl"
 (
+    "IDNum" integer NOT NULL DEFAULT nextval('"SysEntityStructure_Seq"'::regclass),
+    "ID" uuid NOT NULL DEFAULT uuid_generate_v4 (),
     "EntityIDn" integer NOT NULL,
     "MicroserviceIDn" integer NOT NULL,
     "BusinessUnitIDn" integer NOT NULL,
@@ -25,7 +51,8 @@ CREATE TABLE IF NOT EXISTS public."SysEntity_Tbl"
     "DateCreated" timestamp without time zone NOT NULL,
     "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "TableHistory" text COLLATE pg_catalog."default",
-    CONSTRAINT "SenPk_EntityIDn" PRIMARY KEY ("EntityIDn"),
+    CONSTRAINT "SenPk_IDNum" PRIMARY KEY ("IDNum"),
+    CONSTRAINT "SenUnique_ID" UNIQUE ("ID"),
     CONSTRAINT "SenUnique_IDnEntityMicroserviceBusinessUnit" UNIQUE ("EntityIDn", "MicroserviceIDn", "BusinessUnitIDn")
 )
 
@@ -39,9 +66,18 @@ ALTER TABLE IF EXISTS public."SysEntity_Tbl"
 -- 
 COMMENT ON TABLE public."SysEntity_Tbl"
     IS 'Contains the entities information. 
-	The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
-	The primary key: is the union of EntityIDn + MicroserviceIDn + BusinessUnitID.
-	When MicroserviceIDn = System, all microservices have acces to them.';
+The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
+The primary key: is the union of EntityIDn + MicroserviceIDn + BusinessUnitID.
+When MicroserviceIDn = System, all microservices have acces to them.
+The System Entity is generated in the SysEntity_Tbl for a BusinessUnit and Microservice.
+The data is created in the BaseElement_Tbl in the System BusinessUnit, and is the same to all the microservice.
+When I create the entity, I define the business unit owner and the microservice it belongs to.';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."IDNum"
+    IS 'The IDNum is the autoincrement number';
+
+COMMENT ON COLUMN public."SysEntityStructure_Tbl"."ID"
+    IS 'The ID is the uniqueidentifier auto generated V4';
 
 COMMENT ON COLUMN public."SysEntity_Tbl"."EntityIDn"
     IS 'The EntityIDn is the IDNum of the entity, 1=tSisEntity or 3=tSisTable. Link with the diccionary table - SysBaseElement.';
@@ -79,11 +115,14 @@ COMMENT ON COLUMN public."SysEntity_Tbl"."TableHistory"
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the constraint elements
 -- 
-COMMENT ON CONSTRAINT "SenPk_EntityIDn" ON public."SysEntity_Tbl"
-    IS 'The SenPk_EntityIDn came from the SysBaseElement, thats is a integer generated value.';
+COMMENT ON CONSTRAINT "SenPk_IDNum" ON public."SysEntity_Tbl"
+    IS 'The sequence SysEntity_seq generate the nextval';
+
+COMMENT ON CONSTRAINT "SenUnique_ID" ON public."SysEntity_Tbl"
+    IS 'Is the uniqueidentifier';
 
 COMMENT ON CONSTRAINT "SenUnique_IDnEntityMicroserviceBusinessUnit" ON public."SysEntity_Tbl"
-    IS 'An entity can be unique for a business unit.';
+    IS 'An entity can be unique for a Microservice and a business unit.';
 
 -- #########################################################################################################################################################################################
 -- Second create the trigger before insert
