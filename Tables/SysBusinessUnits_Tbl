@@ -93,7 +93,7 @@ BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."DateCreated" IS NULL THEN 
-		NEW."DateCreated" := now();
+		NEW."DateCreated" := CURRENT_TIMESTAMP;
 	END IF;
 RETURN NEW;
 END;
@@ -139,7 +139,7 @@ DECLARE
 BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the DateTimeStamp
-	NEW."DateTimeStamp" := now();
+	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."TableHistory" = 'SetNull' THEN 
