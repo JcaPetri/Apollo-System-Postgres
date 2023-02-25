@@ -1,41 +1,41 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysRootElement_Tbl table
+-- Create the SysRootElements_Tbl table
 -- Contains the system element that are enable; like Language / Money / TimeZone / DataType / etc. 
 -- The elements exists since you create them in this table. 
--- It's information, of what are they, are in the BaseElement_Tbl table.
+-- It`s information, of what are they, are in the BaseElement_Tbl table.
 -- The primary key: is the union of RootElementIDn + MicroserviceIDn + BusinessUnitID.
 -- When MicroserviceIDn = System, all microservices have acces to them.
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- First create the sequence SysRootElement_seq
+-- First create the sequence SysRootElements_seq
 -- 
-DROP SEQUENCE IF EXISTS public."SysRootElement_Seq" CASCADE;
+DROP SEQUENCE IF EXISTS public."SysRootElements_Seq" CASCADE;
 
-CREATE SEQUENCE public."SysRootElement_Seq"
+CREATE SEQUENCE public."SysRootElements_Seq"
     INCREMENT 1
     START 1
     MINVALUE 1
     MAXVALUE 2147483647
     CACHE 1;
 
-ALTER SEQUENCE public."SysRootElement_Seq"
+ALTER SEQUENCE public."SysRootElements_Seq"
     OWNER TO postgres;
 
-COMMENT ON SEQUENCE public."SysRootElement_Seq"
-    IS 'The sequence SysRootElement_seq generate the nextval of the IDNum';
+COMMENT ON SEQUENCE public."SysRootElements_Seq"
+    IS 'The sequence SysRootElements_seq generate the nextval of the IDNum';
 
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Second create the SysRootElement_Tbl table
+-- Second create the SysRootElements_Tbl table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Table: public.SysRootElement_Tbl
-DROP TABLE IF EXISTS public."SysRootElement_Tbl" CASCADE;
+-- Table: public.SysRootElements_Tbl
+DROP TABLE IF EXISTS public."SysRootElements_Tbl" CASCADE;
 
-CREATE TABLE IF NOT EXISTS public."SysRootElement_Tbl"
+CREATE TABLE IF NOT EXISTS public."SysRootElements_Tbl"
 (
-    "IDNum" integer NOT NULL DEFAULT nextval('"SysRootElement_Seq"'::regclass),
+    "IDNum" integer NOT NULL DEFAULT nextval('"SysRootElements_Seq"'::regclass),
     "ID" uuid NOT NULL DEFAULT uuid_generate_v4 (),
     "RootElementIDn" integer NOT NULL,
     "MicroserviceIDn" integer NOT NULL,
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS public."SysRootElement_Tbl"
     "CreatedByIDn" integer NOT NULL,
     "LastModifiedByIDn" integer NOT NULL,
     "OwnerIDn" integer NOT NULL,
-    "DateCreated" timestamp without time zone NOT NULL,
-    "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "DateCreated" timestamp with time zone NOT NULL,
+    "DateTimeStamp" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "TableHistory" text COLLATE pg_catalog."default",
     CONSTRAINT "SrePk_IDNum" PRIMARY KEY ("IDNum"),
     CONSTRAINT "SreUnique_ID" UNIQUE ("ID"),
@@ -54,75 +54,75 @@ CREATE TABLE IF NOT EXISTS public."SysRootElement_Tbl"
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public."SysRootElement_Tbl"
+ALTER TABLE IF EXISTS public."SysRootElements_Tbl"
     OWNER to postgres;
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the table fields elements
 -- 
-COMMENT ON TABLE public."SysRootElement_Tbl"
+COMMENT ON TABLE public."SysRootElements_Tbl"
     IS '-- Contains the system element that are enable; like Language / Money / TimeZone / DataType / etc. 
 The elements exists since you create them in this table. 
 It`s information, of what are they, are in the BaseElement_Tbl table.
 The primary key: is the union of RootElementIDn + MicroserviceIDn + BusinessUnitID.
 When MicroserviceIDn = System, all microservices have acces to them.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."IDNum"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."IDNum"
     IS 'The IDNum is the autoincrement number';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."ID"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."ID"
     IS 'The ID is the uniqueidentifier auto generated V4';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."RootElementIDn"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."RootElementIDn"
     IS 'The RootElementIDn is the IDNum of the element. Link with the SysBaseElement_Tbl.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."MicroserviceIDn"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."MicroserviceIDn"
     IS 'The MicroserviceIDn is the IDNum of the microservice to which the element belongs. If its value is System all microservices have access to it.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."BusinessUnitIDn"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."BusinessUnitIDn"
     IS 'The BusinessUnitIDn is the business unit that the general option fields articles belong.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."StateIDn"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."StateIDn"
     IS 'The StatedIDn is the IDNum that define if the record is enable or not.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."CreatedByIDn"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."CreatedByIDn"
     IS 'The CreatedByIDn is the IDNum of the user who created the record.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."LastModifiedByIDn"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."LastModifiedByIDn"
     IS 'The LastModifiedByIDn is the IDNum of the last user who modified the record.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."OwnerIDn"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."OwnerIDn"
     IS 'The OwnerIDn is the IDNum of the record owner.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."DateCreated"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."DateCreated"
     IS 'The DateCreated is the record creation datetime UTC.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."DateTimeStamp"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."DateTimeStamp"
     IS 'The DateTimeStamp is the datetime UTC of the last modification.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."TableHistory"
+COMMENT ON COLUMN public."SysRootElements_Tbl"."TableHistory"
     IS 'The TableHistory contain then change history of each column.';
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the constraint elements
 -- 
-COMMENT ON CONSTRAINT "SrePk_IDNum" ON public."SysRootElement_Tbl"
-    IS 'The sequence SysRootElement_seq generate the nextval';
+COMMENT ON CONSTRAINT "SrePk_IDNum" ON public."SysRootElements_Tbl"
+    IS 'The sequence SysRootElements_seq generate the nextval';
 
-COMMENT ON CONSTRAINT "SreUnique_ID" ON public."SysRootElement_Tbl"
+COMMENT ON CONSTRAINT "SreUnique_ID" ON public."SysRootElements_Tbl"
     IS 'Is the uniqueidentifier';
 
-COMMENT ON CONSTRAINT "SreUnique_IDnRootEleMicroServBusinessUnit" ON public."SysRootElement_Tbl"
+COMMENT ON CONSTRAINT "SreUnique_IDnRootEleMicroServBusinessUnit" ON public."SysRootElements_Tbl"
     IS 'A rootelement can be unique for an microservice and a business unit.';
 
 -- #########################################################################################################################################################################################
 -- Second create the trigger before insert
 --	Step 1: create the function before insert
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysRootElementBeforeInsert_Tfnc()
-DROP FUNCTION IF EXISTS public."SysRootElementBeforeInsert_Tfnc"() CASCADE;
+-- FUNCTION: public.SysRootElementsBeforeInsert_Tfnc()
+DROP FUNCTION IF EXISTS public."SysRootElementsBeforeInsert_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysRootElementBeforeInsert_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysRootElementsBeforeInsert_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -132,41 +132,41 @@ BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."DateCreated" IS NULL THEN 
-		NEW."DateCreated" := CURRENT_TIMESTAMP;
+		NEW."DateCreated" := now();
 	END IF;
 RETURN NEW;
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysRootElementBeforeInsert_Tfnc"()
+ALTER FUNCTION public."SysRootElementsBeforeInsert_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysRootElementBeforeInsert_Tfnc"()
+COMMENT ON FUNCTION public."SysRootElementsBeforeInsert_Tfnc"()
     IS 'Create the function to set de current timestamp for the datecreated field.
-	This funtion is used by the SysRootElement_Tbl table before insert trigger.';
+	This funtion is used by the SysRootElements_Tbl table before insert trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before insert in the SysRootElement table
--- Trigger: SysRootElementBeforeInsert_Trg
-DROP TRIGGER IF EXISTS "SysRootElementBeforeInsert_Trg" ON public."SysRootElement_Tbl" CASCADE;
+--	Step 2: create the trigger before insert in the SysRootElements table
+-- Trigger: SysRootElementsBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysRootElementsBeforeInsert_Trg" ON public."SysRootElements_Tbl" CASCADE;
 
-CREATE TRIGGER "SysRootElementBeforeInsert_Trg"
+CREATE TRIGGER "SysRootElementsBeforeInsert_Trg"
     BEFORE INSERT
-    ON public."SysRootElement_Tbl"
+    ON public."SysRootElements_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysRootElementBeforeInsert_Tfnc"();
+    EXECUTE FUNCTION public."SysRootElementsBeforeInsert_Tfnc"();
 
-COMMENT ON TRIGGER "SysRootElementBeforeInsert_Trg" ON public."SysRootElement_Tbl"
-    IS 'Set the SysRootElementBeforeInsert_Tfnc function, that makes datetime UTC of the DateCreated field';
+COMMENT ON TRIGGER "SysRootElementsBeforeInsert_Trg" ON public."SysRootElements_Tbl"
+    IS 'Set the SysRootElementsBeforeInsert_Tfnc function, that makes datetime UTC of the DateCreated field';
 
 -- #########################################################################################################################################################################################
 -- Third create the trigger before update
 --	Step 1: create the function before update
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysRootElementBeforeUpdate_Tfnc()
-DROP FUNCTION IF EXISTS public."SysRootElementBeforeUpdate_Tfnc"() CASCADE;
+-- FUNCTION: public.SysRootElementsBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysRootElementsBeforeUpdate_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysRootElementBeforeUpdate_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysRootElementsBeforeUpdate_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -178,7 +178,7 @@ DECLARE
 BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the DateTimeStamp
-	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
+	NEW."DateTimeStamp" := now();
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."TableHistory" = 'SetNull' THEN 
@@ -208,23 +208,23 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysRootElementBeforeUpdate_Tfnc"()
+ALTER FUNCTION public."SysRootElementsBeforeUpdate_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysRootElementBeforeUpdate_Tfnc"()
+COMMENT ON FUNCTION public."SysRootElementsBeforeUpdate_Tfnc"()
     IS 'Create the function to set the new datetimestamp and the history of the record.
-	This funtion is used by the SysRootElement_Tbl table before update trigger.';
+	This funtion is used by the SysRootElements_Tbl table before update trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before update in the SysRootElement_Tbl table
--- Trigger: SysRootElementBeforeUpdate_Trg
-DROP TRIGGER IF EXISTS "SysRootElementBeforeUpdate_Trg" ON public."SysRootElement_Tbl" CASCADE;
+--	Step 2: create the trigger before update in the SysRootElements_Tbl table
+-- Trigger: SysRootElementsBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysRootElementsBeforeUpdate_Trg" ON public."SysRootElements_Tbl" CASCADE;
 
-CREATE TRIGGER "SysRootElementBeforeUpdate_Trg"
+CREATE TRIGGER "SysRootElementsBeforeUpdate_Trg"
     BEFORE UPDATE 
-    ON public."SysRootElement_Tbl"
+    ON public."SysRootElements_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysRootElementBeforeUpdate_Tfnc"();
+    EXECUTE FUNCTION public."SysRootElementsBeforeUpdate_Tfnc"();
 
-COMMENT ON TRIGGER "SysRootElementBeforeUpdate_Trg" ON public."SysRootElement_Tbl"
-    IS 'Set the SysRootElementBeforeUpdate_Tfnc function, that makes datetime UTC and the record History.';
+COMMENT ON TRIGGER "SysRootElementsBeforeUpdate_Trg" ON public."SysRootElements_Tbl"
+    IS 'Set the SysRootElementsBeforeUpdate_Tfnc function, that makes datetime UTC and the record History.';
