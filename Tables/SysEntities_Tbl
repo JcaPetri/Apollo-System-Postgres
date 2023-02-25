@@ -1,44 +1,44 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysEntity_Tbl table
+-- Create the SysEntities_Tbl table
 -- Contains the entities information. 
 -- The entities exists since you create them in this table. 
 -- It's information, of what are they, are in the BaseElement_Tbl table.
 -- The primary key: is the union of EntityIDn + MicroserviceIDn + BusinessUnitID.
 -- When MicroserviceIDn = System, all microservices have acces to them.
--- The System Entity is generated in the SysEntity_Tbl for a BusinessUnit and Microservice.
+-- The System Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
 -- The data is created in the BaseElement_Tbl in the System BusinessUnit, and is the same to all the microservice.
 -- When I create the entity, I define the business unit owner and the microservice it belongs to.
 
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- First create the sequence SysEntity_seq
+-- First create the sequence SysEntities_seq
 -- 
-DROP SEQUENCE IF EXISTS public."SysEntity_Seq" CASCADE;
+DROP SEQUENCE IF EXISTS public."SysEntities_Seq" CASCADE;
 
-CREATE SEQUENCE public."SysEntity_Seq"
+CREATE SEQUENCE public."SysEntities_Seq"
     INCREMENT 1
     START 1
     MINVALUE 1
     MAXVALUE 2147483647
     CACHE 1;
 
-ALTER SEQUENCE public."SysEntity_Seq"
+ALTER SEQUENCE public."SysEntities_Seq"
     OWNER TO postgres;
 
-COMMENT ON SEQUENCE public."SysEntity_Seq"
-    IS 'The sequence SysEntity_seq generate the nextval of the IDNum';
+COMMENT ON SEQUENCE public."SysEntities_Seq"
+    IS 'The sequence SysEntities_seq generate the nextval of the IDNum';
 
 
 -- #########################################################################################################################################################################################
--- First create the SysEntityStructure_Tbl table
+-- First create the SysEntitiesStructure_Tbl table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Table: public.SysEntity_Tbl
-DROP TABLE IF EXISTS public."SysEntity_Tbl" CASCADE;
+-- Table: public.SysEntities_Tbl
+DROP TABLE IF EXISTS public."SysEntities_Tbl" CASCADE;
 
-CREATE TABLE IF NOT EXISTS public."SysEntity_Tbl"
+CREATE TABLE IF NOT EXISTS public."SysEntities_Tbl"
 (
-    "IDNum" integer NOT NULL DEFAULT nextval('"SysEntityStructure_Seq"'::regclass),
+    "IDNum" integer NOT NULL DEFAULT nextval('"SysEntities_Seq"'::regclass),
     "ID" uuid NOT NULL DEFAULT uuid_generate_v4 (),
     "EntityIDn" integer NOT NULL,
     "MicroserviceIDn" integer NOT NULL,
@@ -48,8 +48,8 @@ CREATE TABLE IF NOT EXISTS public."SysEntity_Tbl"
     "CreatedByIDn" integer NOT NULL,
     "LastModifiedByIDn" integer NOT NULL,
     "OwnerIDn" integer NOT NULL,
-    "DateCreated" timestamp without time zone NOT NULL,
-    "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "DateCreated" timestamp with time zone NOT NULL,
+    "DateTimeStamp" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "TableHistory" text COLLATE pg_catalog."default",
     CONSTRAINT "SenPk_IDNum" PRIMARY KEY ("IDNum"),
     CONSTRAINT "SenUnique_ID" UNIQUE ("ID"),
@@ -58,80 +58,80 @@ CREATE TABLE IF NOT EXISTS public."SysEntity_Tbl"
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public."SysEntity_Tbl"
+ALTER TABLE IF EXISTS public."SysEntities_Tbl"
     OWNER to postgres;
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the table fields elements
 -- 
-COMMENT ON TABLE public."SysEntity_Tbl"
+COMMENT ON TABLE public."SysEntities_Tbl"
     IS 'Contains the entities information. 
 The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
 The primary key: is the union of EntityIDn + MicroserviceIDn + BusinessUnitID.
 When MicroserviceIDn = System, all microservices have acces to them.
-The System Entity is generated in the SysEntity_Tbl for a BusinessUnit and Microservice.
+The System Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
 The data is created in the BaseElement_Tbl in the System BusinessUnit, and is the same to all the microservice.
 When I create the entity, I define the business unit owner and the microservice it belongs to.';
 
-COMMENT ON COLUMN public."SysEntityStructure_Tbl"."IDNum"
+COMMENT ON COLUMN public."SysEntities_Tbl"."IDNum"
     IS 'The IDNum is the autoincrement number';
 
-COMMENT ON COLUMN public."SysEntityStructure_Tbl"."ID"
+COMMENT ON COLUMN public."SysEntities_Tbl"."ID"
     IS 'The ID is the uniqueidentifier auto generated V4';
 
-COMMENT ON COLUMN public."SysEntity_Tbl"."EntityIDn"
+COMMENT ON COLUMN public."SysEntities_Tbl"."EntityIDn"
     IS 'The EntityIDn is the IDNum of the entity, 1=tSisEntity or 3=tSisTable. Link with the diccionary table - SysBaseElement.';
 
-COMMENT ON COLUMN public."SysRootElement_Tbl"."MicroserviceIDn"
+COMMENT ON COLUMN public."SysEntities_Tbl"."MicroserviceIDn"
     IS 'The MicroserviceIDn is the IDNum of the microservice to which the entity belongs. If its value is System all microservices have access to it.';
 
-COMMENT ON COLUMN public."SysEntity_Tbl"."BusinessUnitIDn"
+COMMENT ON COLUMN public."SysEntities_Tbl"."BusinessUnitIDn"
     IS 'The BusinessUnitIDn is the business unit that the entities belong. Link with the SysCompany.';
 
-COMMENT ON COLUMN public."SysEntity_Tbl"."EntityTypeIDn"
+COMMENT ON COLUMN public."SysEntities_Tbl"."EntityTypeIDn"
     IS 'The EntityTypeIDn is the IDNum of the entity type, 1=tSisEntity or 3=tSisTable. Link with the diccionary table - SysBaseElement.';
 
-COMMENT ON COLUMN public."SysEntity_Tbl"."StateIDn"
+COMMENT ON COLUMN public."SysEntities_Tbl"."StateIDn"
     IS 'The StatedIDn is the IDNum that define if the record is enable or not.';
 
-COMMENT ON COLUMN public."SysEntity_Tbl"."CreatedByIDn"
+COMMENT ON COLUMN public."SysEntities_Tbl"."CreatedByIDn"
     IS 'The CreatedByIDn is the IDNum of the user who created the record.';
 
-COMMENT ON COLUMN public."SysEntity_Tbl"."LastModifiedByIDn"
+COMMENT ON COLUMN public."SysEntities_Tbl"."LastModifiedByIDn"
     IS 'The LastModifiedByIDn is the IDNum of the last user who modified the record.';
 
-COMMENT ON COLUMN public."SysEntity_Tbl"."OwnerIDn"
+COMMENT ON COLUMN public."SysEntities_Tbl"."OwnerIDn"
     IS 'The OwnerIDn is the IDNum of the record owner.';
 
-COMMENT ON COLUMN public."SysEntity_Tbl"."DateCreated"
+COMMENT ON COLUMN public."SysEntities_Tbl"."DateCreated"
     IS 'The DateCreated is the record creation datetime UTC.';
 
-COMMENT ON COLUMN public."SysEntity_Tbl"."DateTimeStamp"
+COMMENT ON COLUMN public."SysEntities_Tbl"."DateTimeStamp"
     IS 'The DateTimeStamp is the datetime UTC of the last modification.';
 
-COMMENT ON COLUMN public."SysEntity_Tbl"."TableHistory"
+COMMENT ON COLUMN public."SysEntities_Tbl"."TableHistory"
     IS 'The TableHistory contain then change history of each column.';
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the constraint elements
 -- 
-COMMENT ON CONSTRAINT "SenPk_IDNum" ON public."SysEntity_Tbl"
-    IS 'The sequence SysEntity_seq generate the nextval';
+COMMENT ON CONSTRAINT "SenPk_IDNum" ON public."SysEntities_Tbl"
+    IS 'The sequence SysEntities_seq generate the nextval';
 
-COMMENT ON CONSTRAINT "SenUnique_ID" ON public."SysEntity_Tbl"
+COMMENT ON CONSTRAINT "SenUnique_ID" ON public."SysEntities_Tbl"
     IS 'Is the uniqueidentifier';
 
-COMMENT ON CONSTRAINT "SenUnique_IDnEntityMicroserviceBusinessUnit" ON public."SysEntity_Tbl"
+COMMENT ON CONSTRAINT "SenUnique_IDnEntityMicroserviceBusinessUnit" ON public."SysEntities_Tbl"
     IS 'An entity can be unique for a Microservice and a business unit.';
 
 -- #########################################################################################################################################################################################
 -- Second create the trigger before insert
 --	Step 1: create the function before insert
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysEntityBeforeInsert_Tfnc()
-DROP FUNCTION IF EXISTS public."SysEntityBeforeInsert_Tfnc"() CASCADE;
+-- FUNCTION: public.SysEntitiesBeforeInsert_Tfnc()
+DROP FUNCTION IF EXISTS public."SysEntitiesBeforeInsert_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysEntityBeforeInsert_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysEntitiesBeforeInsert_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -141,41 +141,41 @@ BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."DateCreated" IS NULL THEN 
-		NEW."DateCreated" := CURRENT_TIMESTAMP;
+		NEW."DateCreated" := now();
 	END IF;
 RETURN NEW;
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysEntityBeforeInsert_Tfnc"()
+ALTER FUNCTION public."SysEntitiesBeforeInsert_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysEntityBeforeInsert_Tfnc"()
+COMMENT ON FUNCTION public."SysEntitiesBeforeInsert_Tfnc"()
     IS 'Create the function to set de current timestamp for the datecreated field.
-	This funtion is used by the SysEntity_Tbl table before insert trigger.';
+	This funtion is used by the SysEntities_Tbl table before insert trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before insert in the SysEntity table
--- Trigger: SysEntityBeforeInsert_Trg
-DROP TRIGGER IF EXISTS "SysEntityBeforeInsert_Trg" ON public."SysEntity_Tbl" CASCADE;
+--	Step 2: create the trigger before insert in the SysEntities table
+-- Trigger: SysEntitiesBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysEntitiesBeforeInsert_Trg" ON public."SysEntities_Tbl" CASCADE;
 
-CREATE TRIGGER "SysEntityBeforeInsert_Trg"
+CREATE TRIGGER "SysEntitiesBeforeInsert_Trg"
     BEFORE INSERT
-    ON public."SysEntity_Tbl"
+    ON public."SysEntities_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysEntityBeforeInsert_Tfnc"();
+    EXECUTE FUNCTION public."SysEntitiesBeforeInsert_Tfnc"();
 
-COMMENT ON TRIGGER "SysEntityBeforeInsert_Trg" ON public."SysEntity_Tbl"
+COMMENT ON TRIGGER "SysEntitiesBeforeInsert_Trg" ON public."SysEntities_Tbl"
     IS 'Set the datetime UTC of the DateCreated field';
 
 -- #########################################################################################################################################################################################
 -- Third create the trigger before update
 --	Step 1: create the function before update
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysEntityBeforeUpdate_Tfnc()
-DROP FUNCTION IF EXISTS public."SysEntityBeforeUpdate_Tfnc"() CASCADE;
+-- FUNCTION: public.SysEntitiesBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysEntitiesBeforeUpdate_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysEntityBeforeUpdate_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysEntitiesBeforeUpdate_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -187,7 +187,7 @@ DECLARE
 BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the DateTimeStamp
-	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
+	NEW."DateTimeStamp" := now();
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."TableHistory" = 'SetNull' THEN 
@@ -218,23 +218,23 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysEntityBeforeUpdate_Tfnc"()
+ALTER FUNCTION public."SysEntitiesBeforeUpdate_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysEntityBeforeUpdate_Tfnc"()
+COMMENT ON FUNCTION public."SysEntitiesBeforeUpdate_Tfnc"()
     IS 'Create the function to set the new datetimestamp and the history of the record.
-	This funtion is used by the SysEntity_Tbl table before update trigger.';
+	This funtion is used by the SysEntities_Tbl table before update trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before update in the SysEntity table
--- Trigger: SysEntityBeforeUpdate_Trg
-DROP TRIGGER IF EXISTS "SysEntityBeforeUpdate_Trg" ON public."SysEntity_Tbl" CASCADE;
+--	Step 2: create the trigger before update in the SysEntities table
+-- Trigger: SysEntitiesBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysEntitiesBeforeUpdate_Trg" ON public."SysEntities_Tbl" CASCADE;
 
-CREATE TRIGGER "SysEntityBeforeUpdate_Trg"
+CREATE TRIGGER "SysEntitiesBeforeUpdate_Trg"
     BEFORE UPDATE 
-    ON public."SysEntity_Tbl"
+    ON public."SysEntities_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysEntityBeforeUpdate_Tfnc"();
+    EXECUTE FUNCTION public."SysEntitiesBeforeUpdate_Tfnc"();
 
-COMMENT ON TRIGGER "SysEntityBeforeUpdate_Trg" ON public."SysEntity_Tbl"
+COMMENT ON TRIGGER "SysEntitiesBeforeUpdate_Trg" ON public."SysEntities_Tbl"
     IS 'Set the datetime UTC and the record History.';
