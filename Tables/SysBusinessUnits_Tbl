@@ -1,5 +1,5 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysBusinessUnit_Tbl table
+-- Create the SysBusinessUnits_Tbl table
 -- Contains the business unit information. 
 -- The business unit exists since you create them in this table. 
 -- It`s information, of what are they, are in the BaseElement_Tbl table.
@@ -8,10 +8,10 @@
 -- #########################################################################################################################################################################################
 -- First create the Table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Table: public.SysBusinessUnit_Tbl
-DROP TABLE IF EXISTS public."SysBusinessUnit_Tbl" CASCADE;
+-- Table: public.SysBusinessUnits_Tbl
+DROP TABLE IF EXISTS public."SysBusinessUnits_Tbl" CASCADE;
 
-CREATE TABLE IF NOT EXISTS public."SysBusinessUnit_Tbl"
+CREATE TABLE IF NOT EXISTS public."SysBusinessUnits_Tbl"
 (
     "BusinessUnitIDn" integer NOT NULL,
     "CompanyIDn" integer NOT NULL,
@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS public."SysBusinessUnit_Tbl"
     "CreatedByIDn" integer NOT NULL,
     "LastModifiedByIDn" integer NOT NULL,
     "OwnerIDn" integer NOT NULL,
-    "DateCreated" timestamp without time zone NOT NULL,
-    "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "DateCreated" timestamp with time zone NOT NULL,
+    "DateTimeStamp" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "TableHistory" text COLLATE pg_catalog."default",
     CONSTRAINT "SbuPk_BusinessUnitIDn" PRIMARY KEY ("BusinessUnitIDn"),
     CONSTRAINT "SbuUnique_IDnBusinessUnitCompany" UNIQUE ("BusinessUnitIDn", "CompanyIDn")
@@ -28,62 +28,62 @@ CREATE TABLE IF NOT EXISTS public."SysBusinessUnit_Tbl"
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public."SysBusinessUnit_Tbl"
+ALTER TABLE IF EXISTS public."SysBusinessUnits_Tbl"
     OWNER to postgres;
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the table fields elements
 -- 
-COMMENT ON TABLE public."SysBusinessUnit_Tbl"
+COMMENT ON TABLE public."SysBusinessUnits_Tbl"
     IS 'Contains the business unit information. 
 The business unit exists since you create them in this table. 
 It`s information, of what are they, are in the BaseElement_Tbl table.
 The primary key: is the BusinessUnitIDn field and must be unique for each Company.';
 
-COMMENT ON COLUMN public."SysBusinessUnit_Tbl"."BusinessUnitIDn"
+COMMENT ON COLUMN public."SysBusinessUnits_Tbl"."BusinessUnitIDn"
     IS 'The BusinessUnitIDn is the IDNum of the business unit. Link with the SysBaseElement_Tbl.';
 
-COMMENT ON COLUMN public."SysBusinessUnit_Tbl"."CompanyIDn"
+COMMENT ON COLUMN public."SysBusinessUnits_Tbl"."CompanyIDn"
     IS 'The CompanyIDn is the company that the business unit belong. Link with the SysCompany_Tbl.';
 
-COMMENT ON COLUMN public."SysBusinessUnit_Tbl"."StateIDn"
+COMMENT ON COLUMN public."SysBusinessUnits_Tbl"."StateIDn"
     IS 'The StatedIDn is the IDNum that define if the record is enable or not.';
 
-COMMENT ON COLUMN public."SysBusinessUnit_Tbl"."CreatedByIDn"
+COMMENT ON COLUMN public."SysBusinessUnits_Tbl"."CreatedByIDn"
     IS 'The CreatedByIDn is the IDNum of the user who created the record.';
 
-COMMENT ON COLUMN public."SysBusinessUnit_Tbl"."LastModifiedByIDn"
+COMMENT ON COLUMN public."SysBusinessUnits_Tbl"."LastModifiedByIDn"
     IS 'The LastModifiedByIDn is the IDNum of the last user who modified the record.';
 
-COMMENT ON COLUMN public."SysBusinessUnit_Tbl"."OwnerIDn"
+COMMENT ON COLUMN public."SysBusinessUnits_Tbl"."OwnerIDn"
     IS 'The OwnerIDn is the IDNum of the record owner.';
 
-COMMENT ON COLUMN public."SysBusinessUnit_Tbl"."DateCreated"
+COMMENT ON COLUMN public."SysBusinessUnits_Tbl"."DateCreated"
     IS 'The DateCreated is the record creation datetime UTC.';
 
-COMMENT ON COLUMN public."SysBusinessUnit_Tbl"."DateTimeStamp"
+COMMENT ON COLUMN public."SysBusinessUnits_Tbl"."DateTimeStamp"
     IS 'The DateTimeStamp is the datetime UTC of the last modification.';
 
-COMMENT ON COLUMN public."SysBusinessUnit_Tbl"."TableHistory"
+COMMENT ON COLUMN public."SysBusinessUnits_Tbl"."TableHistory"
     IS 'The TableHistory contain then change history of each column.';
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the constraint elements
 -- 
-COMMENT ON CONSTRAINT "SbuPk_BusinessUnitIDn" ON public."SysBusinessUnit_Tbl"
+COMMENT ON CONSTRAINT "SbuPk_BusinessUnitIDn" ON public."SysBusinessUnits_Tbl"
     IS 'The SbuPk_EntityIDn came from the SysBaseElement, thats is a integer generated value.';
 
-COMMENT ON CONSTRAINT "SbuUnique_IDnBusinessUnitCompany" ON public."SysBusinessUnit_Tbl"
+COMMENT ON CONSTRAINT "SbuUnique_IDnBusinessUnitCompany" ON public."SysBusinessUnits_Tbl"
     IS 'An business unit can be unique for a company.';
 
 -- #########################################################################################################################################################################################
 -- Second create the trigger before insert
 --	Step 1: create the function before insert
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysBusinessUnitBeforeInsert_Tfnc()
-DROP FUNCTION IF EXISTS public."SysBusinessUnitBeforeInsert_Tfnc"() CASCADE;
+-- FUNCTION: public.SysBusinessUnitsBeforeInsert_Tfnc()
+DROP FUNCTION IF EXISTS public."SysBusinessUnitsBeforeInsert_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysBusinessUnitBeforeInsert_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysBusinessUnitsBeforeInsert_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -93,41 +93,41 @@ BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."DateCreated" IS NULL THEN 
-		NEW."DateCreated" := CURRENT_TIMESTAMP;
+		NEW."DateCreated" := now();
 	END IF;
 RETURN NEW;
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysBusinessUnitBeforeInsert_Tfnc"()
+ALTER FUNCTION public."SysBusinessUnitsBeforeInsert_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysBusinessUnitBeforeInsert_Tfnc"()
+COMMENT ON FUNCTION public."SysBusinessUnitsBeforeInsert_Tfnc"()
     IS 'Create the function to set de current timestamp for the datecreated field.
-	This funtion is used by the SysBusinessUnit_Tbl table before insert trigger.';
+	This funtion is used by the SysBusinessUnits_Tbl table before insert trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before insert in the SysBusinessUnit table
--- Trigger: SysBusinessUnitBeforeInsert_Trg
-DROP TRIGGER IF EXISTS "SysBusinessUnitBeforeInsert_Trg" ON public."SysBusinessUnit_Tbl" CASCADE;
+--	Step 2: create the trigger before insert in the SysBusinessUnits table
+-- Trigger: SysBusinessUnitsBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysBusinessUnitsBeforeInsert_Trg" ON public."SysBusinessUnits_Tbl" CASCADE;
 
-CREATE TRIGGER "SysBusinessUnitBeforeInsert_Trg"
+CREATE TRIGGER "SysBusinessUnitsBeforeInsert_Trg"
     BEFORE INSERT
-    ON public."SysBusinessUnit_Tbl"
+    ON public."SysBusinessUnits_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysBusinessUnitBeforeInsert_Tfnc"();
+    EXECUTE FUNCTION public."SysBusinessUnitsBeforeInsert_Tfnc"();
 
-COMMENT ON TRIGGER "SysBusinessUnitBeforeInsert_Trg" ON public."SysBusinessUnit_Tbl"
+COMMENT ON TRIGGER "SysBusinessUnitsBeforeInsert_Trg" ON public."SysBusinessUnits_Tbl"
     IS 'Set the datetime UTC of the DateCreated field';
 
 -- #########################################################################################################################################################################################
 -- Third create the trigger before update
 --	Step 1: create the function before update
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysBusinessUnitBeforeUpdate_Tfnc()
-DROP FUNCTION IF EXISTS public."SysBusinessUnitBeforeUpdate_Tfnc"() CASCADE;
+-- FUNCTION: public.SysBusinessUnitsBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysBusinessUnitsBeforeUpdate_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysBusinessUnitBeforeUpdate_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysBusinessUnitsBeforeUpdate_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -139,7 +139,7 @@ DECLARE
 BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the DateTimeStamp
-	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
+	NEW."DateTimeStamp" := now();
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."TableHistory" = 'SetNull' THEN 
@@ -168,23 +168,23 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysBusinessUnitBeforeUpdate_Tfnc"()
+ALTER FUNCTION public."SysBusinessUnitsBeforeUpdate_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysBusinessUnitBeforeUpdate_Tfnc"()
+COMMENT ON FUNCTION public."SysBusinessUnitsBeforeUpdate_Tfnc"()
     IS 'Create the function to set the new datetimestamp and the history of the record.
-	This funtion is used by the SysBusinessUnit_Tbl table before update trigger.';
+	This funtion is used by the SysBusinessUnits_Tbl table before update trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before update in the SysBusinessUnit table
--- Trigger: SysBusinessUnitBeforeUpdate_Trg
-DROP TRIGGER IF EXISTS "SysBusinessUnitBeforeUpdate_Trg" ON public."SysBusinessUnit_Tbl" CASCADE;
+--	Step 2: create the trigger before update in the SysBusinessUnits table
+-- Trigger: SysBusinessUnitsBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysBusinessUnitsBeforeUpdate_Trg" ON public."SysBusinessUnits_Tbl" CASCADE;
 
-CREATE TRIGGER "SysBusinessUnitBeforeUpdate_Trg"
+CREATE TRIGGER "SysBusinessUnitsBeforeUpdate_Trg"
     BEFORE UPDATE 
-    ON public."SysBusinessUnit_Tbl"
+    ON public."SysBusinessUnits_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysBusinessUnitBeforeUpdate_Tfnc"();
+    EXECUTE FUNCTION public."SysBusinessUnitsBeforeUpdate_Tfnc"();
 
-COMMENT ON TRIGGER "SysBusinessUnitBeforeUpdate_Trg" ON public."SysBusinessUnit_Tbl"
+COMMENT ON TRIGGER "SysBusinessUnitsBeforeUpdate_Trg" ON public."SysBusinessUnits_Tbl"
     IS 'Set the datetime UTC and the record History.';
