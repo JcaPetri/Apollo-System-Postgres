@@ -1,5 +1,5 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysEntityStructureFieldDefaultValue_Tbl table
+-- Create the SysEntityStructureFieldDefaultValues_Tbl table
 -- Contains the defaults values of each field/column. You can customs multiple version of defaults values.
 -- When entering a lot of data, some fields always have the same values, so if you define a version with default values for these fields, the system loads this value and you do not need to write them.
 -- The value of the field must be the same type of the field, defined in the SysEntityStructure_Tbl.
@@ -7,34 +7,34 @@
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- First create the sequence SysEntityStructureFieldDefaultValue_seq
+-- First create the sequence SysEntityStructureFieldDefaultValues_seq
 -- 
-DROP SEQUENCE IF EXISTS public."SysEntityStructureFieldDefaultValue_Seq" CASCADE;
+DROP SEQUENCE IF EXISTS public."SysEntityStructureFieldDefaultValues_Seq" CASCADE;
 
-CREATE SEQUENCE public."SysEntityStructureFieldDefaultValue_Seq"
+CREATE SEQUENCE public."SysEntityStructureFieldDefaultValues_Seq"
     INCREMENT 1
     START 1
     MINVALUE 1
     MAXVALUE 2147483647
     CACHE 1;
 
-ALTER SEQUENCE public."SysEntityStructureFieldDefaultValue_Seq"
+ALTER SEQUENCE public."SysEntityStructureFieldDefaultValues_Seq"
     OWNER TO postgres;
 
-COMMENT ON SEQUENCE public."SysEntityStructureFieldDefaultValue_Seq"
-    IS 'The sequence SysEntityStructureFieldDefaultValue_seq generate the nextval of the IDNum';
+COMMENT ON SEQUENCE public."SysEntityStructureFieldDefaultValues_Seq"
+    IS 'The sequence SysEntityStructureFieldDefaultValues_seq generate the nextval of the IDNum';
 
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Second create the SysEntityStructureFieldDefaultValue_Tbl table
+-- Second create the SysEntityStructureFieldDefaultValues_Tbl table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Table: public.SysEntityStructureFieldDefaultValue_Tbl
-DROP TABLE IF EXISTS public."SysEntityStructureFieldDefaultValue_Tbl" CASCADE;
+-- Table: public.SysEntityStructureFieldDefaultValues_Tbl
+DROP TABLE IF EXISTS public."SysEntityStructureFieldDefaultValues_Tbl" CASCADE;
 
-CREATE TABLE IF NOT EXISTS public."SysEntityStructureFieldDefaultValue_Tbl"
+CREATE TABLE IF NOT EXISTS public."SysEntityStructureFieldDefaultValues_Tbl"
 (
-    "IDNum" integer NOT NULL DEFAULT nextval('"SysEntityStructureFieldDefaultValue_Seq"'::regclass),
+    "IDNum" integer NOT NULL DEFAULT nextval('"SysEntityStructureFieldDefaultValues_Seq"'::regclass),
     "ID" uuid NOT NULL DEFAULT uuid_generate_v4 (),
     "FieldIDn" integer NOT NULL,
     "DefaultVersionIDn" integer NOT NULL,
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS public."SysEntityStructureFieldDefaultValue_Tbl"
     "CreatedByIDn" integer NOT NULL,
     "LastModifiedByIDn" integer NOT NULL,
     "OwnerIDn" integer NOT NULL,
-    "DateCreated" timestamp without time zone NOT NULL,
-    "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "DateCreated" timestamp with time zone NOT NULL,
+    "DateTimeStamp" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "TableHistory" text COLLATE pg_catalog."default",
     CONSTRAINT "SedvPk_IDNum" PRIMARY KEY ("IDNum"),
     CONSTRAINT "SedvUnique_ID" UNIQUE ("ID"),
@@ -54,76 +54,76 @@ CREATE TABLE IF NOT EXISTS public."SysEntityStructureFieldDefaultValue_Tbl"
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public."SysEntityStructureFieldDefaultValue_Tbl"
+ALTER TABLE IF EXISTS public."SysEntityStructureFieldDefaultValues_Tbl"
     OWNER to postgres;
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the table fields elements
 -- 
-COMMENT ON TABLE public."SysEntityStructureFieldDefaultValue_Tbl"
+COMMENT ON TABLE public."SysEntityStructureFieldDefaultValues_Tbl"
     IS 'Contains the system structure. In this table you build the tables and java entities structures, with thiers column and fields.
 You must define all the properties of the entities.
 The primary key: are the union of the columns FieldIDn + EntityIDn + BusinessUnitIDn.';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."IDNum"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."IDNum"
     IS 'The IDNum is the autoincrement number';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."ID"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."ID"
     IS 'The ID is the uniqueidentifier auto generated V4';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."FieldIDn"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."FieldIDn"
     IS 'The FieldIDn is the IDNum of the field/column of the entity. Link with the SysBaseElement_Tbl.';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."DefaultVersionIDn"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."DefaultVersionIDn"
     IS 'The DefaultVersionIDn is the IDNum of the DefaultVersion, defined in the SysBaseElement_Tbl.';
 
 COMMENT ON COLUMN public."SysEntityStructureFieldProperties_Tbl"."EntityStructureIDn"
     IS 'The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."FieldDefaultValue"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."FieldDefaultValue"
     IS 'The FieldDefaultValue is a value that must be the same type of the field, defined in the SysEntityStructure_Tbl.';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."StateIDn"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."StateIDn"
     IS 'The StatedIDn is the IDNum that define if the record is enable or not.';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."CreatedByIDn"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."CreatedByIDn"
     IS 'The CreatedByIDn is the IDNum of the user who created the record.';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."LastModifiedByIDn"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."LastModifiedByIDn"
     IS 'The LastModifiedByIDn is the IDNum of the last user who modified the record.';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."OwnerIDn"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."OwnerIDn"
     IS 'The OwnerIDn is the IDNum of the record owner.';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."DateCreated"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."DateCreated"
     IS 'The DateCreated is the record creation datetime UTC.';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."DateTimeStamp"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."DateTimeStamp"
     IS 'The DateTimeStamp is the datetime UTC of the last modification.';
 
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValue_Tbl"."TableHistory"
+COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."TableHistory"
     IS 'The TableHistory contain then change history of each column.';
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the constraint elements
 -- 
-COMMENT ON CONSTRAINT "SedvPk_IDNum" ON public."SysEntityStructureFieldDefaultValue_Tbl"
-    IS 'The sequence SysEntityStructureFieldDefaultValue_seq generate the nextval';
+COMMENT ON CONSTRAINT "SedvPk_IDNum" ON public."SysEntityStructureFieldDefaultValues_Tbl"
+    IS 'The sequence SysEntityStructureFieldDefaultValues_seq generate the nextval';
 
-COMMENT ON CONSTRAINT "SedvUnique_ID" ON public."SysEntityStructureFieldDefaultValue_Tbl"
+COMMENT ON CONSTRAINT "SedvUnique_ID" ON public."SysEntityStructureFieldDefaultValues_Tbl"
     IS 'Is the uniqueidentifier';
 
-COMMENT ON CONSTRAINT "SedvUnique_IDnFieldEntityStrDefVersion" ON public."SysEntityStructureFieldDefaultValue_Tbl"
+COMMENT ON CONSTRAINT "SedvUnique_IDnFieldEntityStrDefVersion" ON public."SysEntityStructureFieldDefaultValues_Tbl"
     IS 'A Default Value can be unique in a Entity Structure (FieldIDn + EntityIDn).';
 
 -- #########################################################################################################################################################################################
 -- Second create the trigger before insert
 --	Step 1: create the function before insert
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysEntityStructureFieldDefaultValueBeforeInsert_Tfnc()
-DROP FUNCTION IF EXISTS public."SysEntityStructureFieldDefaultValueBeforeInsert_Tfnc"() CASCADE;
+-- FUNCTION: public.SysEntityStructureFieldDefaultValuesBeforeInsert_Tfnc()
+DROP FUNCTION IF EXISTS public."SysEntityStructureFieldDefaultValuesBeforeInsert_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysEntityStructureFieldDefaultValueBeforeInsert_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysEntityStructureFieldDefaultValuesBeforeInsert_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -139,35 +139,35 @@ RETURN NEW;
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysEntityStructureFieldDefaultValueBeforeInsert_Tfnc"()
+ALTER FUNCTION public."SysEntityStructureFieldDefaultValuesBeforeInsert_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysEntityStructureFieldDefaultValueBeforeInsert_Tfnc"()
+COMMENT ON FUNCTION public."SysEntityStructureFieldDefaultValuesBeforeInsert_Tfnc"()
     IS 'Create the function to set de current timestamp for the datecreated field.
-	This funtion is used by the SysEntityStructureFieldDefaultValue_Tbl table before insert trigger.';
+	This funtion is used by the SysEntityStructureFieldDefaultValues_Tbl table before insert trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before insert in the SysEntityStructureFieldDefaultValue table
--- Trigger: SysEntityStructureFieldDefaultValueBeforeInsert_Trg
-DROP TRIGGER IF EXISTS "SysEntityStructureFieldDefaultValueBeforeInsert_Trg" ON public."SysEntityStructureFieldDefaultValue_Tbl" CASCADE;
+--	Step 2: create the trigger before insert in the SysEntityStructureFieldDefaultValues table
+-- Trigger: SysEntityStructureFieldDefaultValuesBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysEntityStructureFieldDefaultValuesBeforeInsert_Trg" ON public."SysEntityStructureFieldDefaultValues_Tbl" CASCADE;
 
-CREATE TRIGGER "SysEntityStructureFieldDefaultValueBeforeInsert_Trg"
+CREATE TRIGGER "SysEntityStructureFieldDefaultValuesBeforeInsert_Trg"
     BEFORE INSERT
-    ON public."SysEntityStructureFieldDefaultValue_Tbl"
+    ON public."SysEntityStructureFieldDefaultValues_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysEntityStructureFieldDefaultValueBeforeInsert_Tfnc"();
+    EXECUTE FUNCTION public."SysEntityStructureFieldDefaultValuesBeforeInsert_Tfnc"();
 
-COMMENT ON TRIGGER "SysEntityStructureFieldDefaultValueBeforeInsert_Trg" ON public."SysEntityStructureFieldDefaultValue_Tbl"
-    IS 'Set the SysEntityStructureFieldDefaultValueBeforeInsert_Tfnc function, that makes datetime UTC of the DateCreated field';
+COMMENT ON TRIGGER "SysEntityStructureFieldDefaultValuesBeforeInsert_Trg" ON public."SysEntityStructureFieldDefaultValues_Tbl"
+    IS 'Set the SysEntityStructureFieldDefaultValuesBeforeInsert_Tfnc function, that makes datetime UTC of the DateCreated field';
 
 -- #########################################################################################################################################################################################
 -- Third create the trigger before update
 --	Step 1: create the function before update
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysEntityStructureFieldDefaultValueBeforeUpdate_Tfnc()
-DROP FUNCTION IF EXISTS public."SysEntityStructureFieldDefaultValueBeforeUpdate_Tfnc"() CASCADE;
+-- FUNCTION: public.SysEntityStructureFieldDefaultValuesBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysEntityStructureFieldDefaultValuesBeforeUpdate_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysEntityStructureFieldDefaultValueBeforeUpdate_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysEntityStructureFieldDefaultValuesBeforeUpdate_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -211,23 +211,23 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysEntityStructureFieldDefaultValueBeforeUpdate_Tfnc"()
+ALTER FUNCTION public."SysEntityStructureFieldDefaultValuesBeforeUpdate_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysEntityStructureFieldDefaultValueBeforeUpdate_Tfnc"()
+COMMENT ON FUNCTION public."SysEntityStructureFieldDefaultValuesBeforeUpdate_Tfnc"()
     IS 'Create the function to set the new datetimestamp and the history of the record.
-	This funtion is used by the SysEntityStructureFieldDefaultValue_Tbl table before update trigger.';
+	This funtion is used by the SysEntityStructureFieldDefaultValues_Tbl table before update trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before update in the SysEntityStructureFieldDefaultValue_Tbl table
--- Trigger: SysEntityStructureFieldDefaultValueBeforeUpdate_Trg
-DROP TRIGGER IF EXISTS "SysEntityStructureFieldDefaultValueBeforeUpdate_Trg" ON public."SysEntityStructureFieldDefaultValue_Tbl" CASCADE;
+--	Step 2: create the trigger before update in the SysEntityStructureFieldDefaultValues_Tbl table
+-- Trigger: SysEntityStructureFieldDefaultValuesBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysEntityStructureFieldDefaultValuesBeforeUpdate_Trg" ON public."SysEntityStructureFieldDefaultValues_Tbl" CASCADE;
 
-CREATE TRIGGER "SysEntityStructureFieldDefaultValueBeforeUpdate_Trg"
+CREATE TRIGGER "SysEntityStructureFieldDefaultValuesBeforeUpdate_Trg"
     BEFORE UPDATE 
-    ON public."SysEntityStructureFieldDefaultValue_Tbl"
+    ON public."SysEntityStructureFieldDefaultValues_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysEntityStructureFieldDefaultValueBeforeUpdate_Tfnc"();
+    EXECUTE FUNCTION public."SysEntityStructureFieldDefaultValuesBeforeUpdate_Tfnc"();
 
-COMMENT ON TRIGGER "SysEntityStructureFieldDefaultValueBeforeUpdate_Trg" ON public."SysEntityStructureFieldDefaultValue_Tbl"
-    IS 'Set the SysEntityStructureFieldDefaultValueBeforeUpdate_Tfnc function, that makes datetime UTC and the record History.';
+COMMENT ON TRIGGER "SysEntityStructureFieldDefaultValuesBeforeUpdate_Trg" ON public."SysEntityStructureFieldDefaultValues_Tbl"
+    IS 'Set the SysEntityStructureFieldDefaultValuesBeforeUpdate_Tfnc function, that makes datetime UTC and the record History.';
