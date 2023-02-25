@@ -1,5 +1,5 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysBaseElement_Tbl table
+-- Create the SysBaseElements_Tbl table
 /* It is the dictionary of the System Data Base.
 Each code entered generates an ID (uniqueidentifier) ​​and an IDNum unique autonumerical value.
 The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
@@ -17,33 +17,33 @@ The Scope and BusinessUnit combination can be the Kafka/rabbitMq topic.
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- First create the sequence SysBaseElement_seq
+-- First create the sequence SysBaseElements_seq
 -- 
-DROP SEQUENCE IF EXISTS public."SysBaseElement_Seq" CASCADE;
+DROP SEQUENCE IF EXISTS public."SysBaseElements_Seq" CASCADE;
 
-CREATE SEQUENCE public."SysBaseElement_Seq"
+CREATE SEQUENCE public."SysBaseElements_Seq"
     INCREMENT 1
     START 1
     MINVALUE 1
     MAXVALUE 2147483647
     CACHE 1;
 
-ALTER SEQUENCE public."SysBaseElement_Seq"
+ALTER SEQUENCE public."SysBaseElements_Seq"
     OWNER TO postgres;
 
-COMMENT ON SEQUENCE public."SysBaseElement_Seq"
-    IS 'The sequence SysBaseElement_Tbl_seq generate the nextval of the IDNum';
+COMMENT ON SEQUENCE public."SysBaseElements_Seq"
+    IS 'The sequence SysBaseElements_Tbl_seq generate the nextval of the IDNum';
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Second create the SysBaseElement_Tbl table
+-- Second create the SysBaseElements_Tbl table
 -- 
--- Table: public.SysBaseElement_Tbl
-DROP TABLE IF EXISTS public."SysBaseElement_Tbl" CASCADE;
+-- Table: public.SysBaseElements_Tbl
+DROP TABLE IF EXISTS public."SysBaseElements_Tbl" CASCADE;
 
-CREATE TABLE public."SysBaseElement_Tbl"
+CREATE TABLE public."SysBaseElements_Tbl"
 (
-    "IDNum" integer NOT NULL DEFAULT nextval('"SysBaseElement_Seq"'::regclass),
+    "IDNum" integer NOT NULL DEFAULT nextval('"SysBaseElements_Seq"'::regclass),
     "ID" uuid NOT NULL DEFAULT uuid_generate_v4 (),
     "IDName" character varying(250) NOT NULL,
     "IDNameStructureIDn" integer NOT NULL,
@@ -58,8 +58,8 @@ CREATE TABLE public."SysBaseElement_Tbl"
     "CreatedByIDn" integer NOT NULL,
     "LastModifiedByIDn" integer NOT NULL,
     "OwnerIDn" integer NOT NULL,
-    "DateCreated" timestamp without time zone NOT NULL,
-    "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "DateCreated" timestamp with time zone NOT NULL,
+    "DateTimeStamp" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "TableHistory" text,
     CONSTRAINT "SbePk_IDNum" PRIMARY KEY ("IDNum"),
     CONSTRAINT "SbeUnique_ID" UNIQUE ("ID"),
@@ -67,13 +67,13 @@ CREATE TABLE public."SysBaseElement_Tbl"
     CONSTRAINT "SbeUnique_IDScopeIDCode" UNIQUE ("ScopeIDn", "IDCode")
 );
 
-ALTER TABLE IF EXISTS public."SysBaseElement_Tbl"
+ALTER TABLE IF EXISTS public."SysBaseElements_Tbl"
     OWNER to postgres;
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of each table element
 -- 
-COMMENT ON TABLE public."SysBaseElement_Tbl"
+COMMENT ON TABLE public."SysBaseElements_Tbl"
     IS 'It is the dictionary of the Articles module.
 Each code entered generates an ID (uniqueidentifier) ​​and an IDNum unique autonumerical value.
 The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
@@ -89,85 +89,85 @@ Example: the pampa article is created in the dictionary, but it does not exist u
 The Scope and BusinessUnit combination can be the Kafka/rabbitMq topic.
 ';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."IDNum"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."IDNum"
     IS 'The IDNum is the autoincrement number';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."ID"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."ID"
     IS 'The ID is the uniqueidentifier auto generated V4';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."IDName"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."IDName"
     IS 'The IDName is the user-readable code for the selected language.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."IDNameStructureIDn"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."IDNameStructureIDn"
     IS 'The IDNameStructureIDn is the IDNum of the IDName structure, if the IDName is multivalued, here it refers to the structure.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."ScopeIDn"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."ScopeIDn"
     IS 'The ScopeIDn is the IdNum of the Scope, the Name must be unique for the scope of application, usually a Table';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."BusinessUnitIDn"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."BusinessUnitIDn"
     IS 'The BusinessUnitIDn is the IdNum of the BusinessUnit to which the IDName is assigned';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."LanguageIDn"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."LanguageIDn"
     IS 'The LanguageIDn is the IdNum of the language in which the Name is defined';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."IDCode"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."IDCode"
     IS 'The IDCode is the unique code of the record for a scope and company.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."DefinitionIDn"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."DefinitionIDn"
     IS 'The DefinitionIDn is the IdNum of the element definition type.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."InformationTypeIDn"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."InformationTypeIDn"
     IS 'Then InformationTypeIDn is the IdNum of the type of information that the record represents.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."IDIsUsed"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."IDIsUsed"
     IS 'The IDIsUsed determines if the registry is used or not.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."StateIDn"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."StateIDn"
     IS 'The StatedIDn define if the record is enable or not.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."CreatedByIDn"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."CreatedByIDn"
     IS 'The CreatedByIDn is the IdNum of the user who created the record.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."LastModifiedByIDn"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."LastModifiedByIDn"
     IS 'The LastModifiedByIDn is the IdNum of the last user who modified the record.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."OwnerIDn"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."OwnerIDn"
     IS 'The OwnerIDn is the IdNum of the record owner.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."DateCreated"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."DateCreated"
     IS 'The DateCreated is the record creation date with UTC.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."DateTimeStamp"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."DateTimeStamp"
     IS 'The DateTimeStamp is the date of the last modification of the record with UTC.';
 
-COMMENT ON COLUMN public."SysBaseElement_Tbl"."TableHistory"
+COMMENT ON COLUMN public."SysBaseElements_Tbl"."TableHistory"
     IS 'The TableHistory contain then change history of each column.';
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the constraint elements
 -- 
-COMMENT ON CONSTRAINT "SbePk_IDNum" ON public."SysBaseElement_Tbl"
-    IS 'The sequence SysBaseElement_Tbl_seq generate the nextval';
+COMMENT ON CONSTRAINT "SbePk_IDNum" ON public."SysBaseElements_Tbl"
+    IS 'The sequence SysBaseElements_Tbl_seq generate the nextval';
 
-COMMENT ON CONSTRAINT "SbeUnique_ID" ON public."SysBaseElement_Tbl"
+COMMENT ON CONSTRAINT "SbeUnique_ID" ON public."SysBaseElements_Tbl"
     IS 'Is the uniqueidentifier';
 
-COMMENT ON CONSTRAINT "SbeUnique_IDNameScopeBusUnitLang" ON public."SysBaseElement_Tbl"
+COMMENT ON CONSTRAINT "SbeUnique_IDNameScopeBusUnitLang" ON public."SysBaseElements_Tbl"
     IS 'A name can be unique for a ScopeId, for a BusinessUnitId, and LanguageId.';
 
-COMMENT ON CONSTRAINT "SbeUnique_IDScopeIDCode" ON public."SysBaseElement_Tbl"
+COMMENT ON CONSTRAINT "SbeUnique_IDScopeIDCode" ON public."SysBaseElements_Tbl"
     IS 'A CodeId can be unique for a ScopeId, for a BusinessUnitId.
 Thats mean, you can''t duplicate the CodeId for one scope.';
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Third create the Trigger Before Insert - SysBaseElement_Tbl
+-- Third create the Trigger Before Insert - SysBaseElements_Tbl
 --	Step 1: create the function before insert
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public."SysBaseElementBeforeInsert_Tfnc"()
-DROP FUNCTION IF EXISTS public."SysBaseElementBeforeInsert_Tfnc"() CASCADE;
+-- FUNCTION: public."SysBaseElementsBeforeInsert_Tfnc"()
+DROP FUNCTION IF EXISTS public."SysBaseElementsBeforeInsert_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysBaseElementBeforeInsert_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysBaseElementsBeforeInsert_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -177,46 +177,46 @@ BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."DateCreated" IS NULL THEN 
-		NEW."DateCreated" := CURRENT_TIMESTAMP;
+		NEW."DateCreated" := now();
 	END IF;
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the IdCode if is null
 	IF NEW."IDCode" IS NULL THEN 
-		NEW."IDCode" := (SELECT COALESCE(MAX("IDCode"),0) + 1 FROM public."SysBaseElement_Tbl" WHERE "ScopeIDn" = NEW."ScopeIDn");
+		NEW."IDCode" := (SELECT COALESCE(MAX("IDCode"),0) + 1 FROM public."SysBaseElements_Tbl" WHERE "ScopeIDn" = NEW."ScopeIDn");
 	END IF;
 RETURN NEW;
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysBaseElementBeforeInsert_Tfnc"()
+ALTER FUNCTION public."SysBaseElementsBeforeInsert_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysBaseElementBeforeInsert_Tfnc"()
+COMMENT ON FUNCTION public."SysBaseElementsBeforeInsert_Tfnc"()
     IS 'Create the function to set the new datetimestamp and the history of the record.
-	This funtion is used by the SysBaseElement_Tbl table before update trigger.';
+	This funtion is used by the SysBaseElements_Tbl table before update trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before insert in the SysBaseElement_Tbl table
--- Trigger: SysBaseElementBeforeInsert_Trg
-DROP TRIGGER IF EXISTS "SysBaseElementBeforeInsert_Trg" ON public."SysBaseElement_Tbl" CASCADE;
+--	Step 2: create the trigger before insert in the SysBaseElements_Tbl table
+-- Trigger: SysBaseElementsBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysBaseElementsBeforeInsert_Trg" ON public."SysBaseElements_Tbl" CASCADE;
 
-CREATE TRIGGER "SysBaseElementBeforeInsert_Trg"
+CREATE TRIGGER "SysBaseElementsBeforeInsert_Trg"
     BEFORE INSERT
-    ON public."SysBaseElement_Tbl"
+    ON public."SysBaseElements_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysBaseElementBeforeInsert_Tfnc"();
+    EXECUTE FUNCTION public."SysBaseElementsBeforeInsert_Tfnc"();
 
-COMMENT ON TRIGGER "SysBaseElementBeforeInsert_Trg" ON public."SysBaseElement_Tbl"
+COMMENT ON TRIGGER "SysBaseElementsBeforeInsert_Trg" ON public."SysBaseElements_Tbl"
     IS 'Set the datetime UTC of the DateCreated field';
 
 -- #########################################################################################################################################################################################
 -- Fourth create the trigger before update
 --	Step 1: create the function before update
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysBaseElementBeforeUpdate_Tfnc()
-DROP FUNCTION IF EXISTS public."SysBaseElementBeforeUpdate_Tfnc"() CASCADE;
+-- FUNCTION: public.SysBaseElementsBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysBaseElementsBeforeUpdate_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysBaseElementBeforeUpdate_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysBaseElementsBeforeUpdate_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -228,7 +228,7 @@ DECLARE
 BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the DateTimeStamp
-	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
+	NEW."DateTimeStamp" := now();
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."TableHistory" = 'SetNull' THEN 
@@ -267,19 +267,19 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysBaseElementBeforeUpdate_Tfnc"()
+ALTER FUNCTION public."SysBaseElementsBeforeUpdate_Tfnc"()
     OWNER TO postgres;
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before insert in the SysBaseElement_Tbl table
--- Trigger: SysBaseElementBeforeUpdate_Trg
-DROP TRIGGER IF EXISTS "SysBaseElementBeforeUpdate_Trg" ON public."SysBaseElement_Tbl" CASCADE;
+--	Step 2: create the trigger before insert in the SysBaseElements_Tbl table
+-- Trigger: SysBaseElementsBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysBaseElementsBeforeUpdate_Trg" ON public."SysBaseElements_Tbl" CASCADE;
 
-CREATE TRIGGER "SysBaseElementBeforeUpdate_Trg"
+CREATE TRIGGER "SysBaseElementsBeforeUpdate_Trg"
     BEFORE UPDATE 
-    ON public."SysBaseElement_Tbl"
+    ON public."SysBaseElements_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysBaseElementBeforeUpdate_Tfnc"();
+    EXECUTE FUNCTION public."SysBaseElementsBeforeUpdate_Tfnc"();
 
-COMMENT ON TRIGGER "SysBaseElementBeforeUpdate_Trg" ON public."SysBaseElement_Tbl"
+COMMENT ON TRIGGER "SysBaseElementsBeforeUpdate_Trg" ON public."SysBaseElements_Tbl"
     IS 'Set the datetime UTC and the record History.';
