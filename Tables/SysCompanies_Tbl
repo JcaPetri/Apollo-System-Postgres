@@ -1,5 +1,5 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysCompany_Tbl table
+-- Create the SysCompanies_Tbl table
 -- Contains the company information. 
 -- The company exists since you create them in this table. 
 -- It`s information, of what are they, are in the BaseElement_Tbl table.
@@ -8,74 +8,74 @@
 -- #########################################################################################################################################################################################
 -- First create the Table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Table: public.SysCompany_Tbl
-DROP TABLE IF EXISTS public."SysCompany_Tbl" CASCADE;
+-- Table: public.SysCompanies_Tbl
+DROP TABLE IF EXISTS public."SysCompanies_Tbl" CASCADE;
 
-CREATE TABLE IF NOT EXISTS public."SysCompany_Tbl"
+CREATE TABLE IF NOT EXISTS public."SysCompanies_Tbl"
 (
     "CompanyIDn" integer NOT NULL,
     "StateIDn" smallint NOT NULL,
     "CreatedByIDn" integer NOT NULL,
     "LastModifiedByIDn" integer NOT NULL,
     "OwnerIDn" integer NOT NULL,
-    "DateCreated" timestamp without time zone NOT NULL,
-    "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "DateCreated" timestamp with time zone NOT NULL,
+    "DateTimeStamp" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "TableHistory" text COLLATE pg_catalog."default",
     CONSTRAINT "ScoPk_CompanyIDn" PRIMARY KEY ("CompanyIDn")
 )
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public."SysCompany_Tbl"
+ALTER TABLE IF EXISTS public."SysCompanies_Tbl"
     OWNER to postgres;
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the table fields elements
 -- 
-COMMENT ON TABLE public."SysCompany_Tbl"
+COMMENT ON TABLE public."SysCompanies_Tbl"
     IS 'Contains the business unit information. 
 The business unit exists since you create them in this table. 
 It`s information, of what are they, are in the BaseElement_Tbl table.
 The primary key: is the BusinessUnitIDn field and must be unique for each Company.';
 
-COMMENT ON COLUMN public."SysCompany_Tbl"."CompanyIDn"
-    IS 'The CompanyIDn is the company that the business unit belong. Link with the SysCompany_Tbl.';
+COMMENT ON COLUMN public."SysCompanies_Tbl"."CompanyIDn"
+    IS 'The CompanyIDn is the company that the business unit belong. Link with the SysCompanies_Tbl.';
 
-COMMENT ON COLUMN public."SysCompany_Tbl"."StateIDn"
+COMMENT ON COLUMN public."SysCompanies_Tbl"."StateIDn"
     IS 'The StatedIDn is the IDNum that define if the record is enable or not.';
 
-COMMENT ON COLUMN public."SysCompany_Tbl"."CreatedByIDn"
+COMMENT ON COLUMN public."SysCompanies_Tbl"."CreatedByIDn"
     IS 'The CreatedByIDn is the IDNum of the user who created the record.';
 
-COMMENT ON COLUMN public."SysCompany_Tbl"."LastModifiedByIDn"
+COMMENT ON COLUMN public."SysCompanies_Tbl"."LastModifiedByIDn"
     IS 'The LastModifiedByIDn is the IDNum of the last user who modified the record.';
 
-COMMENT ON COLUMN public."SysCompany_Tbl"."OwnerIDn"
+COMMENT ON COLUMN public."SysCompanies_Tbl"."OwnerIDn"
     IS 'The OwnerIDn is the IDNum of the record owner.';
 
-COMMENT ON COLUMN public."SysCompany_Tbl"."DateCreated"
+COMMENT ON COLUMN public."SysCompanies_Tbl"."DateCreated"
     IS 'The DateCreated is the record creation datetime UTC.';
 
-COMMENT ON COLUMN public."SysCompany_Tbl"."DateTimeStamp"
+COMMENT ON COLUMN public."SysCompanies_Tbl"."DateTimeStamp"
     IS 'The DateTimeStamp is the datetime UTC of the last modification.';
 
-COMMENT ON COLUMN public."SysCompany_Tbl"."TableHistory"
+COMMENT ON COLUMN public."SysCompanies_Tbl"."TableHistory"
     IS 'The TableHistory contain then change history of each column.';
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the constraint elements
 -- 
-COMMENT ON CONSTRAINT "ScoPk_CompanyIDn" ON public."SysCompany_Tbl"
+COMMENT ON CONSTRAINT "ScoPk_CompanyIDn" ON public."SysCompanies_Tbl"
     IS 'The ScoPk_CompanyIDn came from the SysBaseElement, thats is a integer generated value.';
 
 -- #########################################################################################################################################################################################
 -- Second create the trigger before insert
 --	Step 1: create the function before insert
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysCompanyBeforeInsert_Tfnc()
-DROP FUNCTION IF EXISTS public."SysCompanyBeforeInsert_Tfnc"() CASCADE;
+-- FUNCTION: public.SysCompaniesBeforeInsert_Tfnc()
+DROP FUNCTION IF EXISTS public."SysCompaniesBeforeInsert_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysCompanyBeforeInsert_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysCompaniesBeforeInsert_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -85,41 +85,41 @@ BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."DateCreated" IS NULL THEN 
-		NEW."DateCreated" := CURRENT_TIMESTAMP;
+		NEW."DateCreated" := now();
 	END IF;
 RETURN NEW;
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysCompanyBeforeInsert_Tfnc"()
+ALTER FUNCTION public."SysCompaniesBeforeInsert_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysCompanyBeforeInsert_Tfnc"()
+COMMENT ON FUNCTION public."SysCompaniesBeforeInsert_Tfnc"()
     IS 'Create the function to set de current timestamp for the datecreated field.
-	This funtion is used by the SysCompany_Tbl table before insert trigger.';
+	This funtion is used by the SysCompanies_Tbl table before insert trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before insert in the SysCompany table
--- Trigger: SysCompanyBeforeInsert_Trg
-DROP TRIGGER IF EXISTS "SysCompanyBeforeInsert_Trg" ON public."SysCompany_Tbl" CASCADE;
+--	Step 2: create the trigger before insert in the SysCompanies table
+-- Trigger: SysCompaniesBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysCompaniesBeforeInsert_Trg" ON public."SysCompanies_Tbl" CASCADE;
 
-CREATE TRIGGER "SysCompanyBeforeInsert_Trg"
+CREATE TRIGGER "SysCompaniesBeforeInsert_Trg"
     BEFORE INSERT
-    ON public."SysCompany_Tbl"
+    ON public."SysCompanies_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysCompanyBeforeInsert_Tfnc"();
+    EXECUTE FUNCTION public."SysCompaniesBeforeInsert_Tfnc"();
 
-COMMENT ON TRIGGER "SysCompanyBeforeInsert_Trg" ON public."SysCompany_Tbl"
+COMMENT ON TRIGGER "SysCompaniesBeforeInsert_Trg" ON public."SysCompanies_Tbl"
     IS 'Set the datetime UTC of the DateCreated field';
 
 -- #########################################################################################################################################################################################
 -- Third create the trigger before update
 --	Step 1: create the function before update
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysCompanyBeforeUpdate_Tfnc()
-DROP FUNCTION IF EXISTS public."SysCompanyBeforeUpdate_Tfnc"() CASCADE;
+-- FUNCTION: public.SysCompaniesBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysCompaniesBeforeUpdate_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysCompanyBeforeUpdate_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysCompaniesBeforeUpdate_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -131,7 +131,7 @@ DECLARE
 BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the DateTimeStamp
-	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
+	NEW."DateTimeStamp" := now();
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."TableHistory" = 'SetNull' THEN 
@@ -159,23 +159,23 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysCompanyBeforeUpdate_Tfnc"()
+ALTER FUNCTION public."SysCompaniesBeforeUpdate_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysCompanyBeforeUpdate_Tfnc"()
+COMMENT ON FUNCTION public."SysCompaniesBeforeUpdate_Tfnc"()
     IS 'Create the function to set the new datetimestamp and the history of the record.
-	This funtion is used by the SysCompany_Tbl table before update trigger.';
+	This funtion is used by the SysCompanies_Tbl table before update trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before update in the SysCompany table
--- Trigger: SysCompanyBeforeUpdate_Trg
-DROP TRIGGER IF EXISTS "SysCompanyBeforeUpdate_Trg" ON public."SysCompany_Tbl" CASCADE;
+--	Step 2: create the trigger before update in the SysCompanies table
+-- Trigger: SysCompaniesBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysCompaniesBeforeUpdate_Trg" ON public."SysCompanies_Tbl" CASCADE;
 
-CREATE TRIGGER "SysCompanyBeforeUpdate_Trg"
+CREATE TRIGGER "SysCompaniesBeforeUpdate_Trg"
     BEFORE UPDATE 
-    ON public."SysCompany_Tbl"
+    ON public."SysCompanies_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysCompanyBeforeUpdate_Tfnc"();
+    EXECUTE FUNCTION public."SysCompaniesBeforeUpdate_Tfnc"();
 
-COMMENT ON TRIGGER "SysCompanyBeforeUpdate_Trg" ON public."SysCompany_Tbl"
+COMMENT ON TRIGGER "SysCompaniesBeforeUpdate_Trg" ON public."SysCompanies_Tbl"
     IS 'Set the datetime UTC and the record History.';
