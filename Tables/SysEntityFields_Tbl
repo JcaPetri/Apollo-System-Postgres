@@ -1,5 +1,5 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
--- Create the SysEntityField_Tbl table
+-- Create the SysEntityFields_Tbl table
 -- Contains the fields for a Business Unit. 
 -- The fields exists, for this business unit, since you create them in this table. 
 -- It`s information, of what are they, are in the BaseElement_Tbl table.
@@ -10,10 +10,10 @@
 -- #########################################################################################################################################################################################
 -- First create the Table
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- Table: public.SysEntityField_Tbl
-DROP TABLE IF EXISTS public."SysEntityField_Tbl" CASCADE;
+-- Table: public.SysEntityFields_Tbl
+DROP TABLE IF EXISTS public."SysEntityFields_Tbl" CASCADE;
 
-CREATE TABLE IF NOT EXISTS public."SysEntityField_Tbl"
+CREATE TABLE IF NOT EXISTS public."SysEntityFields_Tbl"
 (
     "FieldIDn" integer NOT NULL,
     "BusinessUnitIDn" integer NOT NULL,
@@ -21,72 +21,72 @@ CREATE TABLE IF NOT EXISTS public."SysEntityField_Tbl"
     "CreatedByIDn" integer NOT NULL,
     "LastModifiedByIDn" integer NOT NULL,
     "OwnerIDn" integer NOT NULL,
-    "DateCreated" timestamp without time zone NOT NULL,
-    "DateTimeStamp" timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "DateCreated" timestamp with time zone NOT NULL,
+    "DateTimeStamp" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "TableHistory" text COLLATE pg_catalog."default",
-    CONSTRAINT "SfiPk_FieldIDn" PRIMARY KEY ("FieldIDn"),
-    CONSTRAINT "SfiUnique_IDnFieldBusinessUnit" UNIQUE ("FieldIDn", "BusinessUnitIDn")
+    CONSTRAINT "SefPk_FieldIDn" PRIMARY KEY ("FieldIDn"),
+    CONSTRAINT "SefUnique_IDnFieldBusinessUnit" UNIQUE ("FieldIDn", "BusinessUnitIDn")
 )
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public."SysEntityField_Tbl"
+ALTER TABLE IF EXISTS public."SysEntityFields_Tbl"
     OWNER to postgres;
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the table fields elements
 -- 
-COMMENT ON TABLE public."SysEntityField_Tbl"
+COMMENT ON TABLE public."SysEntityFields_Tbl"
     IS 'Contains the fields for a Business Unit. 
 The fields exists, for this business unit, since you create them in this table. 
 It`s information, of what are they, are in the BaseElement_Tbl table.
 The primary key: is the union of FieldIDn + BusinessUnitID.
 Since no field defined in BaseElement_Tbl is modified in this table, the same IDNum can be used.';
 
-COMMENT ON COLUMN public."SysEntityField_Tbl"."FieldIDn"
+COMMENT ON COLUMN public."SysEntityFields_Tbl"."FieldIDn"
     IS 'The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.';
 
-COMMENT ON COLUMN public."SysEntityField_Tbl"."BusinessUnitIDn"
+COMMENT ON COLUMN public."SysEntityFields_Tbl"."BusinessUnitIDn"
     IS 'The BusinessUnitIDn is the business unit that the entities belong. Link with the SysCompany.';
 
-COMMENT ON COLUMN public."SysEntityField_Tbl"."StateIDn"
+COMMENT ON COLUMN public."SysEntityFields_Tbl"."StateIDn"
     IS 'The StatedIDn is the IDNum that define if the record is enable or not.';
 
-COMMENT ON COLUMN public."SysEntityField_Tbl"."CreatedByIDn"
+COMMENT ON COLUMN public."SysEntityFields_Tbl"."CreatedByIDn"
     IS 'The CreatedByIDn is the IDNum of the user who created the record.';
 
-COMMENT ON COLUMN public."SysEntityField_Tbl"."LastModifiedByIDn"
+COMMENT ON COLUMN public."SysEntityFields_Tbl"."LastModifiedByIDn"
     IS 'The LastModifiedByIDn is the IDNum of the last user who modified the record.';
 
-COMMENT ON COLUMN public."SysEntityField_Tbl"."OwnerIDn"
+COMMENT ON COLUMN public."SysEntityFields_Tbl"."OwnerIDn"
     IS 'The OwnerIDn is the IDNum of the record owner.';
 
-COMMENT ON COLUMN public."SysEntityField_Tbl"."DateCreated"
+COMMENT ON COLUMN public."SysEntityFields_Tbl"."DateCreated"
     IS 'The DateCreated is the record creation datetime UTC.';
 
-COMMENT ON COLUMN public."SysEntityField_Tbl"."DateTimeStamp"
+COMMENT ON COLUMN public."SysEntityFields_Tbl"."DateTimeStamp"
     IS 'The DateTimeStamp is the datetime UTC of the last modification.';
 
-COMMENT ON COLUMN public."SysEntityField_Tbl"."TableHistory"
+COMMENT ON COLUMN public."SysEntityFields_Tbl"."TableHistory"
     IS 'The TableHistory contain then change history of each column.';
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- Create the comments of the constraint elements
 -- 
-COMMENT ON CONSTRAINT "SfiPk_FieldIDn" ON public."SysEntityField_Tbl"
+COMMENT ON CONSTRAINT "SefPk_FieldIDn" ON public."SysEntityFields_Tbl"
     IS 'The SfiPk_FieldIDn came from the SysBaseElement, thats is a integer generated value.';
 
-COMMENT ON CONSTRAINT "SfiUnique_IDnFieldBusinessUnit" ON public."SysEntityField_Tbl"
+COMMENT ON CONSTRAINT "SefUnique_IDnFieldBusinessUnit" ON public."SysEntityFields_Tbl"
     IS 'A field can be unique for a business unit.';
 
 -- #########################################################################################################################################################################################
 -- Second create the trigger before insert
 --	Step 1: create the function before insert
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysEntityFieldBeforeInsert_Tfnc()
-DROP FUNCTION IF EXISTS public."SysEntityFieldBeforeInsert_Tfnc"() CASCADE;
+-- FUNCTION: public.SysEntityFieldsBeforeInsert_Tfnc()
+DROP FUNCTION IF EXISTS public."SysEntityFieldsBeforeInsert_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysEntityFieldBeforeInsert_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysEntityFieldsBeforeInsert_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -96,41 +96,41 @@ BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."DateCreated" IS NULL THEN 
-		NEW."DateCreated" := CURRENT_TIMESTAMP;
+		NEW."DateCreated" := now();
 	END IF;
 RETURN NEW;
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysEntityFieldBeforeInsert_Tfnc"()
+ALTER FUNCTION public."SysEntityFieldsBeforeInsert_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysEntityFieldBeforeInsert_Tfnc"()
+COMMENT ON FUNCTION public."SysEntityFieldsBeforeInsert_Tfnc"()
     IS 'Create the function to set de current timestamp for the datecreated field.
-	This funtion is used by the SysEntityField_Tbl table before insert trigger.';
+	This funtion is used by the SysEntityFields_Tbl table before insert trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before insert in the SysEntityField table
--- Trigger: SysEntityFieldBeforeInsert_Trg
-DROP TRIGGER IF EXISTS "SysEntityFieldBeforeInsert_Trg" ON public."SysEntityField_Tbl" CASCADE;
+--	Step 2: create the trigger before insert in the SysEntityFields table
+-- Trigger: SysEntityFieldsBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysEntityFieldsBeforeInsert_Trg" ON public."SysEntityFields_Tbl" CASCADE;
 
-CREATE TRIGGER "SysEntityFieldBeforeInsert_Trg"
+CREATE TRIGGER "SysEntityFieldsBeforeInsert_Trg"
     BEFORE INSERT
-    ON public."SysEntityField_Tbl"
+    ON public."SysEntityFields_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysEntityFieldBeforeInsert_Tfnc"();
+    EXECUTE FUNCTION public."SysEntityFieldsBeforeInsert_Tfnc"();
 
-COMMENT ON TRIGGER "SysEntityFieldBeforeInsert_Trg" ON public."SysEntityField_Tbl"
+COMMENT ON TRIGGER "SysEntityFieldsBeforeInsert_Trg" ON public."SysEntityFields_Tbl"
     IS 'Set the datetime UTC of the DateCreated field';
 
 -- #########################################################################################################################################################################################
 -- Third create the trigger before update
 --	Step 1: create the function before update
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- FUNCTION: public.SysEntityFieldBeforeUpdate_Tfnc()
-DROP FUNCTION IF EXISTS public."SysEntityFieldBeforeUpdate_Tfnc"() CASCADE;
+-- FUNCTION: public.SysEntityFieldsBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysEntityFieldsBeforeUpdate_Tfnc"() CASCADE;
 
-CREATE OR REPLACE FUNCTION public."SysEntityFieldBeforeUpdate_Tfnc"()
+CREATE OR REPLACE FUNCTION public."SysEntityFieldsBeforeUpdate_Tfnc"()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
@@ -142,7 +142,7 @@ DECLARE
 BEGIN
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the DateTimeStamp
-	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
+	NEW."DateTimeStamp" := now();
 	-- ------------------------------------------------------------------------------------------------------------------
 	-- Set the created date
 	IF NEW."TableHistory" = 'SetNull' THEN 
@@ -171,23 +171,23 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION public."SysEntityFieldBeforeUpdate_Tfnc"()
+ALTER FUNCTION public."SysEntityFieldsBeforeUpdate_Tfnc"()
     OWNER TO postgres;
 
-COMMENT ON FUNCTION public."SysEntityFieldBeforeUpdate_Tfnc"()
+COMMENT ON FUNCTION public."SysEntityFieldsBeforeUpdate_Tfnc"()
     IS 'Create the function to set the new datetimestamp and the history of the record.
-	This funtion is used by the SysEntityField_Tbl table before update trigger.';
+	This funtion is used by the SysEntityFields_Tbl table before update trigger.';
 
 -- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---	Step 2: create the trigger before update in the SysEntityField table
--- Trigger: SysEntityFieldBeforeUpdate_Trg
-DROP TRIGGER IF EXISTS "SysEntityFieldBeforeUpdate_Trg" ON public."SysEntityField_Tbl" CASCADE;
+--	Step 2: create the trigger before update in the SysEntityFields table
+-- Trigger: SysEntityFieldsBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysEntityFieldsBeforeUpdate_Trg" ON public."SysEntityFields_Tbl" CASCADE;
 
-CREATE TRIGGER "SysEntityFieldBeforeUpdate_Trg"
+CREATE TRIGGER "SysEntityFieldsBeforeUpdate_Trg"
     BEFORE UPDATE 
-    ON public."SysEntityField_Tbl"
+    ON public."SysEntityFields_Tbl"
     FOR EACH ROW
-    EXECUTE FUNCTION public."SysEntityFieldBeforeUpdate_Tfnc"();
+    EXECUTE FUNCTION public."SysEntityFieldsBeforeUpdate_Tfnc"();
 
-COMMENT ON TRIGGER "SysEntityFieldBeforeUpdate_Trg" ON public."SysEntityField_Tbl"
+COMMENT ON TRIGGER "SysEntityFieldsBeforeUpdate_Trg" ON public."SysEntityFields_Tbl"
     IS 'Set the datetime UTC and the record History.';
