@@ -1,0 +1,193 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysTableConstraints
+-- After you create all tables, it is necesary create the relations of each others
+
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysRootElements_Tbl and SysBaseElements_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysRootElements_Tbl"
+    ALTER TABLE IF EXISTS public."SysRootElements_Tbl" DROP CONSTRAINT IF EXISTS "SreFk_RootElementIDn";
+    ALTER TABLE IF EXISTS public."SysRootElements_Tbl"
+    ADD CONSTRAINT "SreFk_RootElementIDn" FOREIGN KEY ("RootElementIDn")
+    REFERENCES public."SysBaseElements_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SreFk_RootElementIDn" ON public."SysRootElements_Tbl"
+    IS 'Join RootElementIDn with the dictionary table SysBaseElement IDNum field.';
+
+-- #########################################################################################
+-- Join SysCompanies_Tbl and SysBaseElements_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysCompanies_Tbl"
+    ALTER TABLE IF EXISTS public."SysCompanies_Tbl" DROP CONSTRAINT IF EXISTS "ScoFk_CompanyIDn";
+    ALTER TABLE IF EXISTS public."SysCompanies_Tbl"
+    ADD CONSTRAINT "ScoFk_CompanyIDn" FOREIGN KEY ("CompanyIDn")
+    REFERENCES public."SysBaseElements_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "ScoFk_CompanyIDn" ON public."SysCompanies_Tbl"
+    IS 'Join CompanyIDn with the dictionary table SysBaseElement IDNum field.';
+
+-- #########################################################################################
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysBusinessUnits_Tbl and SysBaseElements_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysBusinessUnits_Tbl"
+    ALTER TABLE IF EXISTS public."SysBusinessUnits_Tbl" DROP CONSTRAINT IF EXISTS "SbuFk_BusinessUnitIDn";
+    ALTER TABLE IF EXISTS public."SysBusinessUnits_Tbl"
+    ADD CONSTRAINT "SbuFk_BusinessUnitIDn" FOREIGN KEY ("BusinessUnitIDn")
+    REFERENCES public."SysBaseElements_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SbuFk_BusinessUnitIDn" ON public."SysBusinessUnits_Tbl"
+    IS 'Join BusinessUnitIDn with the dictionary table SysBaseElement IDNum field.';
+
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysBusinessUnits_Tbl and SysCompanies_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysBusinessUnits_Tbl"
+    ALTER TABLE IF EXISTS public."SysBusinessUnits_Tbl" DROP CONSTRAINT IF EXISTS "SbuFk_CompanyIDn";
+    ALTER TABLE IF EXISTS public."SysBusinessUnits_Tbl"
+    ADD CONSTRAINT "SbuFk_CompanyIDn" FOREIGN KEY ("CompanyIDn")
+    REFERENCES public."SysCompanies_Tbl" ("CompanyIDn") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SbuFk_CompanyIDn" ON public."SysBusinessUnits_Tbl"
+    IS 'Join CompanyIDn with the SysCompanies_Tbl CompanyIDn field.';
+
+-- #########################################################################################
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysEntities_Tbl and SysBaseElements_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysEntities_Tbl"
+    ALTER TABLE IF EXISTS public."SysEntities_Tbl" DROP CONSTRAINT IF EXISTS "SenFk_EntityIDn";
+    ALTER TABLE IF EXISTS public."SysEntities_Tbl"
+    ADD CONSTRAINT "SenFk_EntityIDn" FOREIGN KEY ("EntityIDn")
+    REFERENCES public."SysBaseElements_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SenFk_EntityIDn" ON public."SysEntities_Tbl"
+    IS 'Join EntityIDn with the dictionary table SysBaseElement IDNum field.';
+
+-- #########################################################################################
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysEntityFields_Tbl and SysBaseElements_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysEntityFields_Tbl"
+    ALTER TABLE IF EXISTS public."SysEntityFields_Tbl" DROP CONSTRAINT IF EXISTS "SefFk_FieldIDn";
+    ALTER TABLE IF EXISTS public."SysEntityFields_Tbl"
+    ADD CONSTRAINT "SefFk_FieldIDn" FOREIGN KEY ("FieldIDn")
+    REFERENCES public."SysBaseElements_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SefFk_FieldIDn" ON public."SysEntityFields_Tbl"
+    IS 'Join FieldIDn with the dictionary table SysBaseElement IDNum field.';
+
+-- #########################################################################################
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysEntityStructures_Tbl and SysBaseElements_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysEntityStructures_Tbl"
+    ALTER TABLE IF EXISTS public."SysEntityStructures_Tbl" DROP CONSTRAINT IF EXISTS "SesFk_FieldIDn";
+    ALTER TABLE IF EXISTS public."SysEntityStructures_Tbl"
+    ADD CONSTRAINT "SesFk_FieldIDn" FOREIGN KEY ("FieldIDn")
+    REFERENCES public."SysBaseElements_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SesFk_FieldIDn" ON public."SysEntityStructures_Tbl"
+    IS 'Join FieldIDn with the dictionary table SysBaseElement IDNum field.';
+
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysEntityStructures_Tbl and SysEntities_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysEntityStructures_Tbl"
+    ALTER TABLE IF EXISTS public."SysEntityStructures_Tbl" DROP CONSTRAINT IF EXISTS "SesFk_EntityIDn";
+    ALTER TABLE IF EXISTS public."SysEntityStructures_Tbl"
+    ADD CONSTRAINT "SesFk_EntityIDn" FOREIGN KEY ("EntityIDn")
+    REFERENCES public."SysEntities_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SesFk_EntityIDn" ON public."SysEntityStructures_Tbl"
+    IS 'Join EntityIDn with the SysEntities_Tbl table IDNum field.';
+
+
+-- #########################################################################################
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysEntityStructureFieldProperties_Tbl and SysBaseElements_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysEntityStructureFieldProperties_Tbl"
+    ALTER TABLE IF EXISTS public."SysEntityStructureFieldProperties_Tbl" DROP CONSTRAINT IF EXISTS "SptFk_FieldPropertyIDn";
+    ALTER TABLE IF EXISTS public."SysEntityStructureFieldProperties_Tbl"
+    ADD CONSTRAINT "SptFk_FieldPropertyIDn" FOREIGN KEY ("FieldPropertyIDn")
+    REFERENCES public."SysBaseElements_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SptFk_FieldPropertyIDn" ON public."SysEntityStructureFieldProperties_Tbl"
+    IS 'Join FieldPropertyIDn with the dictionary table SysBaseElement IDNum field.';
+
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysEntityStructureFieldProperties_Tbl and SysEntityStructures_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysEntityStructureFieldProperties_Tbl"
+    ALTER TABLE IF EXISTS public."SysEntityStructureFieldProperties_Tbl" DROP CONSTRAINT IF EXISTS "SptFk_EntityStructureIDn";
+    ALTER TABLE IF EXISTS public."SysEntityStructureFieldProperties_Tbl"
+    ADD CONSTRAINT "SptFk_EntityStructureIDn" FOREIGN KEY ("EntityStructureIDn")
+    REFERENCES public."SysEntityStructures_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SptFk_EntityStructureIDn" ON public."SysEntityStructureFieldProperties_Tbl"
+    IS 'Join EntityStructureIDn with the SysEntityStructures_Tbl table IDNum field.';
+
+
+-- #########################################################################################
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysEntityStructureFieldDefaultValues_Tbl and SysBaseElements_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysEntityStructureFieldDefaultValues_Tbl"
+    ALTER TABLE IF EXISTS public."SysEntityStructureFieldDefaultValues_Tbl" DROP CONSTRAINT IF EXISTS "SedvFk_FieldIDn";
+    ALTER TABLE IF EXISTS public."SysEntityStructureFieldDefaultValues_Tbl"
+    ADD CONSTRAINT "SedvFk_FieldIDn" FOREIGN KEY ("FieldIDn")
+    REFERENCES public."SysBaseElements_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SedvFk_FieldIDn" ON public."SysEntityStructureFieldDefaultValues_Tbl"
+    IS 'Join FieldIDn with the dictionary table SysBaseElement IDNum field.';
+
+
+-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-- Join SysEntityStructureFieldDefaultValues_Tbl and SysEntityStructures_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public."SysEntityStructureFieldDefaultValues_Tbl"
+    ALTER TABLE IF EXISTS public."SysEntityStructureFieldDefaultValues_Tbl" DROP CONSTRAINT IF EXISTS "SedvFk_EntityStructureIDn";
+    ALTER TABLE IF EXISTS public."SysEntityStructureFieldDefaultValues_Tbl"
+    ADD CONSTRAINT "SedvFk_EntityStructureIDn" FOREIGN KEY ("EntityStructureIDn")
+    REFERENCES public."SysEntityStructures_Tbl" ("IDNum") MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+    NOT VALID;
+
+COMMENT ON CONSTRAINT "SedvFk_EntityStructureIDn" ON public."SysEntityStructureFieldDefaultValues_Tbl"
+    IS 'Join EntityStructureIDn with the SysEntityStructures_Tbl table IDNum field.';
+
