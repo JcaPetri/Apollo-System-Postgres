@@ -1,0 +1,190 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysBusinessTrades_Tbl table
+-- Contains the Business Trade information. 
+-- The Business Trade exists since you create them in this table. 
+-- It`s information, of what are they, are in the SysBaseElement_Tbl.
+-- The unique key: is the BusinessTradeIDn + BusinessUnitIDn fields and must be unique.
+
+-- #########################################################################################################################################################################################
+-- First create the Table
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public.SysBusinessTrades_Tbl
+DROP TABLE IF EXISTS public."SysBusinessTrades_Tbl" CASCADE;
+
+CREATE TABLE IF NOT EXISTS public."SysBusinessTrades_Tbl"
+(
+    "BusinessTradeIDn" integer NOT NULL,
+    "BusinessUnitIDn" integer NOT NULL,
+    "StateIDn" smallint NOT NULL,
+    "CreatedByIDn" integer NOT NULL,
+    "LastModifiedByIDn" integer NOT NULL,
+    "OwnerIDn" integer NOT NULL,
+    "DateCreated" timestamp with time zone NOT NULL,
+    "DateTimeStamp" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "TableHistory" text COLLATE pg_catalog."default",
+    CONSTRAINT "SbtPk_BusinessTrade" PRIMARY KEY ("BusinessTradeIDn"),
+    CONSTRAINT "SbtUnique_IDnBusinessTradeBusinessUnit" UNIQUE ("BusinessTradeIDn", "BusinessUnitIDn")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."SysBusinessTrades_Tbl"
+    OWNER to postgres;
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create the comments of the table fields elements
+-- 
+COMMENT ON TABLE public."SysBusinessTrades_Tbl"
+    IS 'Contains the Business Trade information. 
+The Business Trade exists since you create them in this table. 
+It`s information, of what are they, are in the SysBaseElement_Tbl.
+The unique key: is the BusinessTradeIDn + BusinessUnitIDn fields and must be unique.';
+
+COMMENT ON COLUMN public."SysBusinessTrades_Tbl"."BusinessTradeIDn"
+    IS 'The BusinessTrade is the Business Trade. This is the real Client/Supplier of the BusinessUnit.';
+
+COMMENT ON COLUMN public."SysBusinessTrades_Tbl"."BusinessUnitIDn"
+    IS 'The BusinessUnitIDn is the business unit that the Business Trade belong. Link with the SysBusinessUnit_Tbl.';
+
+COMMENT ON COLUMN public."SysBusinessTrades_Tbl"."StateIDn"
+    IS 'The StatedIDn is the IDNum that define if the record is enable or not.';
+
+COMMENT ON COLUMN public."SysBusinessTrades_Tbl"."CreatedByIDn"
+    IS 'The CreatedByIDn is the IDNum of the user who created the record.';
+
+COMMENT ON COLUMN public."SysBusinessTrades_Tbl"."LastModifiedByIDn"
+    IS 'The LastModifiedByIDn is the IDNum of the last user who modified the record.';
+
+COMMENT ON COLUMN public."SysBusinessTrades_Tbl"."OwnerIDn"
+    IS 'The OwnerIDn is the IDNum of the record owner.';
+
+COMMENT ON COLUMN public."SysBusinessTrades_Tbl"."DateCreated"
+    IS 'The DateCreated is the record creation datetime UTC.';
+
+COMMENT ON COLUMN public."SysBusinessTrades_Tbl"."DateTimeStamp"
+    IS 'The DateTimeStamp is the datetime UTC of the last modification.';
+
+COMMENT ON COLUMN public."SysBusinessTrades_Tbl"."TableHistory"
+    IS 'The TableHistory contain then change history of each column.';
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create the comments of the constraint elements
+-- 
+COMMENT ON CONSTRAINT "SbtPk_BusinessTrade" ON public."SysBusinessTrades_Tbl"
+    IS 'The SbtPk_BusinessTrade came from the SysBaseElement_Tbl, thats is a integer generated value.';
+
+COMMENT ON CONSTRAINT "SbtUnique_IDnBusinessTradeBusinessUnit" ON public."SysBusinessTrades_Tbl"
+    IS 'The BusinessTrade is unique for a BusinessUnit.';
+
+-- #########################################################################################################################################################################################
+-- Second create the trigger before insert
+--	Step 1: create the function before insert
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: public.SysBusinessTradesBeforeInsert_Tfnc()
+DROP FUNCTION IF EXISTS public."SysBusinessTradesBeforeInsert_Tfnc"() CASCADE;
+
+CREATE OR REPLACE FUNCTION public."SysBusinessTradesBeforeInsert_Tfnc"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the created date
+	IF NEW."DateCreated" IS NULL THEN 
+		NEW."DateCreated" := CURRENT_TIMESTAMP;
+	END IF;
+RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public."SysBusinessTradesBeforeInsert_Tfnc"()
+    OWNER TO postgres;
+
+COMMENT ON FUNCTION public."SysBusinessTradesBeforeInsert_Tfnc"()
+    IS 'Create the function to set de current timestamp for the datecreated field.
+	This funtion is used by the SysBusinessTrades_Tbl table before insert trigger.';
+
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--	Step 2: create the trigger before insert in the SysBusinessTrades table
+-- Trigger: SysBusinessTradesBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysBusinessTradesBeforeInsert_Trg" ON public."SysBusinessTrades_Tbl" CASCADE;
+
+CREATE TRIGGER "SysBusinessTradesBeforeInsert_Trg"
+    BEFORE INSERT
+    ON public."SysBusinessTrades_Tbl"
+    FOR EACH ROW
+    EXECUTE FUNCTION public."SysBusinessTradesBeforeInsert_Tfnc"();
+
+COMMENT ON TRIGGER "SysBusinessTradesBeforeInsert_Trg" ON public."SysBusinessTrades_Tbl"
+    IS 'Set the datetime UTC of the DateCreated field';
+
+-- #########################################################################################################################################################################################
+-- Third create the trigger before update
+--	Step 1: create the function before update
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: public.SysBusinessTradesBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysBusinessTradesBeforeUpdate_Tfnc"() CASCADE;
+
+CREATE OR REPLACE FUNCTION public."SysBusinessTradesBeforeUpdate_Tfnc"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+DECLARE
+	v_TableHistory text;
+	v_TableHistoryOld text;
+BEGIN
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the DateTimeStamp
+	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the created date
+	IF NEW."TableHistory" = 'SetNull' THEN 
+		NEW."TableHistory" := NULL;
+	ELSEIF NEW."TableHistory" = 'SetOff' THEN
+		NEW."TableHistory" := OLD."TableHistory";
+	ELSE
+		v_TableHistoryOld := OLD."TableHistory";
+		v_TableHistory = '';
+		IF NEW."BusinessTradeIDn" <> OLD."BusinessTradeIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."BusinessTradeIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."BusinessUnitIDn" <> OLD."BusinessUnitIDn" THEN v_TableHistory := OLD."BusinessUnitIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."StateIDn" <> OLD."StateIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."StateIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."CreatedByIDn" <> OLD."CreatedByIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."CreatedByIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."LastModifiedByIDn" <> OLD."LastModifiedByIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."LastModifiedByIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."OwnerIDn" <> OLD."OwnerIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."OwnerIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN v_TableHistory := CONCAT(v_TableHistory,'†',NEW."DateCreated"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."DateTimeStamp" <> OLD."DateTimeStamp" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."DateTimeStamp"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN
+			NEW."TableHistory" := v_TableHistory;
+		ELSE
+			NEW."TableHistory" := CONCAT(v_TableHistory,'‡',v_TableHistoryOld);
+		END IF;
+		
+	END IF;
+	RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public."SysBusinessTradesBeforeUpdate_Tfnc"()
+    OWNER TO postgres;
+
+COMMENT ON FUNCTION public."SysBusinessTradesBeforeUpdate_Tfnc"()
+    IS 'Create the function to set the new datetimestamp and the history of the record.
+	This funtion is used by the SysBusinessTrades_Tbl table before update trigger.';
+
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--	Step 2: create the trigger before update in the SysBusinessTrades table
+-- Trigger: SysBusinessTradesBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysBusinessTradesBeforeUpdate_Trg" ON public."SysBusinessTrades_Tbl" CASCADE;
+
+CREATE TRIGGER "SysBusinessTradesBeforeUpdate_Trg"
+    BEFORE UPDATE 
+    ON public."SysBusinessTrades_Tbl"
+    FOR EACH ROW
+    EXECUTE FUNCTION public."SysBusinessTradesBeforeUpdate_Tfnc"();
+
+COMMENT ON TRIGGER "SysBusinessTradesBeforeUpdate_Trg" ON public."SysBusinessTrades_Tbl"
+    IS 'Set the datetime UTC and the record History.';
