@@ -1,0 +1,236 @@
+-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+-- Create the SysBusinessTradePersons_Tbl table
+-- Contains the personal data of customers and suppliers.
+-- They can be an individual or a legal entity.
+-- In this table, the company custom the person, with its data. 
+-- The unique key: is the PersonIDn + BusinessTradeIDn fields and must be unique.
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- First create the sequence SysBusinessTradePersons_seq
+-- 
+DROP SEQUENCE IF EXISTS public."SysBusinessTradePersons_Seq" CASCADE;
+
+CREATE SEQUENCE public."SysBusinessTradePersons_Seq"
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public."SysBusinessTradePersons_Seq"
+    OWNER TO postgres;
+
+COMMENT ON SEQUENCE public."SysBusinessTradePersons_Seq"
+    IS 'The sequence SysBusinessTradePersons_Tbl_seq generate the nextval of the IDNum';
+
+-- #########################################################################################################################################################################################
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Second create the SysBusinessTradePersons_Tbl
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Table: public.SysBusinessTradePersons_Tbl
+DROP TABLE IF EXISTS public."SysBusinessTradePersons_Tbl" CASCADE;
+
+CREATE TABLE IF NOT EXISTS public."SysBusinessTradePersons_Tbl"
+(
+    "IDNum" integer NOT NULL DEFAULT nextval('"SysBusinessTradePersons_Seq"'::regclass),
+    "ID" uuid NOT NULL DEFAULT uuid_generate_v4 (),
+    "PersonIDn" integer NOT NULL,
+    "BusinessTradeIDn" integer NOT NULL,
+    "BusinessTradeTypeIDn" integer NOT NULL,
+    "Address" character varying(250) NOT NULL,
+    "CountryIDn" integer NOT NULL,
+    "SalesUsualCurrencyIDn" integer NOT NULL,
+    "SalesPriceListIDn" integer NOT NULL,
+    "StateIDn" smallint NOT NULL,
+    "CreatedByIDn" integer NOT NULL,
+    "LastModifiedByIDn" integer NOT NULL,
+    "OwnerIDn" integer NOT NULL,
+    "DateCreated" timestamp with time zone NOT NULL,
+    "DateTimeStamp" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "TableHistory" text COLLATE pg_catalog."default",
+    CONSTRAINT "SbtPk_IDNum" PRIMARY KEY ("IDNum"),
+    CONSTRAINT "SbtUnique_ID" UNIQUE ("ID"),
+    CONSTRAINT "SptUnique_IDnPersonBusinessTrade" UNIQUE ("PersonIDn", "BusinessTradeIDn")
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."SysBusinessTradePersons_Tbl"
+    OWNER to postgres;
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create the comments of the table fields elements
+-- 
+COMMENT ON TABLE public."SysBusinessTradePersons_Tbl"
+    IS 'Contains the persons informations of the clients and suppliers. 
+They can be an individual or a legal entity.
+The persons exists since you create them in this table. 
+It`s information, of what are they, are in the SysBaseElements_Tbl.
+The unique key: is the PersonIDn + BusinessTradeIDn fields and must be unique.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."PersonIDn"
+    IS 'The PersonIDn is the Cliente/Supplier, that can be an individual or legal entity.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."BusinessTradeIDn"
+    IS 'The BusinessTradeIDn is the business trade that the person belong. This link to the BusinessTrades_Tbl.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."BusinessTradeTypeIDn"
+    IS 'The BusinessTradeTypeIDn is the IDNum of the rol of the person in the BusinessTrade, that can be client/supplier/both.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."CountryIDn"
+    IS 'The CountryIDn is the IDNum of the person country.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."Address"
+    IS 'The legal address of the Person.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."SalesUsualCurrencyIDn"
+    IS 'The SalesUsualCurrencyIDn is the IDNum of the usual currency of the sales transactions.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."SalesPriceListIDn"
+    IS 'The SalesPriceListIDn is the IDNum of the default price list to this person.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."StateIDn"
+    IS 'The StatedIDn is the IDNum that define if the record is enable or not.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."CreatedByIDn"
+    IS 'The CreatedByIDn is the IDNum of the user who created the record.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."LastModifiedByIDn"
+    IS 'The LastModifiedByIDn is the IDNum of the last user who modified the record.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."OwnerIDn"
+    IS 'The OwnerIDn is the IDNum of the record owner.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."DateCreated"
+    IS 'The DateCreated is the record creation datetime UTC.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."DateTimeStamp"
+    IS 'The DateTimeStamp is the datetime UTC of the last modification.';
+
+COMMENT ON COLUMN public."SysBusinessTradePersons_Tbl"."TableHistory"
+    IS 'The TableHistory contain then change history of each column.';
+
+-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Create the comments of the constraint elements
+-- 
+COMMENT ON CONSTRAINT "SptUnique_IDnPersonBusinessTrade" ON public."SysBusinessTradePersons_Tbl"
+    IS 'The Person must be unique for the BusinessTrade.';
+
+-- #########################################################################################################################################################################################
+-- Second create the trigger before insert
+--	Step 1: create the function before insert
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: public.SysBusinessTradePersonsBeforeInsert_Tfnc()
+DROP FUNCTION IF EXISTS public."SysBusinessTradePersonsBeforeInsert_Tfnc"() CASCADE;
+
+CREATE OR REPLACE FUNCTION public."SysBusinessTradePersonsBeforeInsert_Tfnc"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+BEGIN
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the created date
+	IF NEW."DateCreated" IS NULL THEN 
+		NEW."DateCreated" := CURRENT_TIMESTAMP;
+	END IF;
+RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public."SysBusinessTradePersonsBeforeInsert_Tfnc"()
+    OWNER TO postgres;
+
+COMMENT ON FUNCTION public."SysBusinessTradePersonsBeforeInsert_Tfnc"()
+    IS 'Create the function to set de current timestamp for the datecreated field.
+	This funtion is used by the SysBusinessTradePersons_Tbl table before insert trigger.';
+
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--	Step 2: create the trigger before insert in the SysBusinessTradePersons table
+-- Trigger: SysBusinessTradePersonsBeforeInsert_Trg
+DROP TRIGGER IF EXISTS "SysBusinessTradePersonsBeforeInsert_Trg" ON public."SysBusinessTradePersons_Tbl" CASCADE;
+
+CREATE TRIGGER "SysBusinessTradePersonsBeforeInsert_Trg"
+    BEFORE INSERT
+    ON public."SysBusinessTradePersons_Tbl"
+    FOR EACH ROW
+    EXECUTE FUNCTION public."SysBusinessTradePersonsBeforeInsert_Tfnc"();
+
+COMMENT ON TRIGGER "SysBusinessTradePersonsBeforeInsert_Trg" ON public."SysBusinessTradePersons_Tbl"
+    IS 'Set the datetime UTC of the DateCreated field';
+
+-- #########################################################################################################################################################################################
+-- Third create the trigger before update
+--	Step 1: create the function before update
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: public.SysBusinessTradePersonsBeforeUpdate_Tfnc()
+DROP FUNCTION IF EXISTS public."SysBusinessTradePersonsBeforeUpdate_Tfnc"() CASCADE;
+
+CREATE OR REPLACE FUNCTION public."SysBusinessTradePersonsBeforeUpdate_Tfnc"()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+DECLARE
+	v_TableHistory text;
+	v_TableHistoryOld text;
+BEGIN
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the DateTimeStamp
+	NEW."DateTimeStamp" := CURRENT_TIMESTAMP;
+	-- ------------------------------------------------------------------------------------------------------------------
+	-- Set the created date
+	IF NEW."TableHistory" = 'SetNull' THEN 
+		NEW."TableHistory" := NULL;
+	ELSEIF NEW."TableHistory" = 'SetOff' THEN
+		NEW."TableHistory" := OLD."TableHistory";
+	ELSE
+		v_TableHistoryOld := OLD."TableHistory";
+		v_TableHistory = '';
+		IF NEW."PersonIDn" <> OLD."PersonIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."PersonIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."BusinessTradeIDn" <> OLD."BusinessTradeIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."BusinessTradeIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."BusinessTradeTypeIDn" <> OLD."BusinessTradeTypeIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."BusinessTradeTypeIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."CountryIDn" <> OLD."CountryIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."CountryIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."Address" <> OLD."Address" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."Address"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."SalesUsualCurrencyIDn" <> OLD."SalesUsualCurrencyIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."SalesUsualCurrencyIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."SalesPriceListIDn" <> OLD."SalesPriceListIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."SalesPriceListIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."StateIDn" <> OLD."StateIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."StateIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."CreatedByIDn" <> OLD."CreatedByIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."CreatedByIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."LastModifiedByIDn" <> OLD."LastModifiedByIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."LastModifiedByIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."OwnerIDn" <> OLD."OwnerIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."OwnerIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN v_TableHistory := CONCAT(v_TableHistory,'†',NEW."DateCreated"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF NEW."DateTimeStamp" <> OLD."DateTimeStamp" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."DateTimeStamp"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
+		IF v_TableHistoryOld IS NULL THEN
+			NEW."TableHistory" := v_TableHistory;
+		ELSE
+			NEW."TableHistory" := CONCAT(v_TableHistory,'‡',v_TableHistoryOld);
+		END IF;
+		
+	END IF;
+	RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public."SysBusinessTradePersonsBeforeUpdate_Tfnc"()
+    OWNER TO postgres;
+
+COMMENT ON FUNCTION public."SysBusinessTradePersonsBeforeUpdate_Tfnc"()
+    IS 'Create the function to set the new datetimestamp and the history of the record.
+	This funtion is used by the SysBusinessTradePersons_Tbl table before update trigger.';
+
+-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--	Step 2: create the trigger before update in the SysBusinessTradePersons table
+-- Trigger: SysBusinessTradePersonsBeforeUpdate_Trg
+DROP TRIGGER IF EXISTS "SysBusinessTradePersonsBeforeUpdate_Trg" ON public."SysBusinessTradePersons_Tbl" CASCADE;
+
+CREATE TRIGGER "SysBusinessTradePersonsBeforeUpdate_Trg"
+    BEFORE UPDATE 
+    ON public."SysBusinessTradePersons_Tbl"
+    FOR EACH ROW
+    EXECUTE FUNCTION public."SysBusinessTradePersonsBeforeUpdate_Tfnc"();
+
+COMMENT ON TRIGGER "SysBusinessTradePersonsBeforeUpdate_Trg" ON public."SysBusinessTradePersons_Tbl"
+    IS 'Set the datetime UTC and the record History.';
