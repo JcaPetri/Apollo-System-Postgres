@@ -1,8 +1,8 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysEntityStructures_Tbl table
--- Contains the system structure. In this table you build the tables and java entities structures, with thiers column and fields.
+-- Contains the system structure. In this table you build the tables and java entities structures, with theirs column and fields.
 -- You must define all the properties of the entities.
--- The primary key: are the union of the columns FieldIDn + EntityIDn + BusinessUnitIDn
+-- The Unique key: are the union of the columns FieldIDn + EntityIDn + BusinessUnitIDn
 -- When an entity is selected from the Entity_Tbl, the BusinessUnit are set, 
 -- these parameters define the possible fields to be selected.
 
