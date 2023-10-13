@@ -4,7 +4,7 @@
 -- The fields exists, for this business unit, since you create them in this table. 
 -- It`s information, of what are they, are in the BaseElement_Tbl table.
 -- The Unique key: is the union of FieldIDn + BusinessUnitID.
--- Since no field defined in BaseElement_Tbl is modified in this table, the same IDNum can be used.
+-- In this table you only assing field to a BusinessUnit. That is the reason you haven't a primary key.
 
 -- #########################################################################################################################################################################################
 -- First create the Table
