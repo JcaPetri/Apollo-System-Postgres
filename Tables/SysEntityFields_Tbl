@@ -1,11 +1,10 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysEntityFields_Tbl table
--- Contains the fields for a Business Unit. 
+-- Contains the fields/columns for a Business Unit. 
 -- The fields exists, for this business unit, since you create them in this table. 
 -- It`s information, of what are they, are in the BaseElement_Tbl table.
--- The primary key: is the union of FieldIDn + BusinessUnitID.
+-- The Unique key: is the union of FieldIDn + BusinessUnitID.
 -- Since no field defined in BaseElement_Tbl is modified in this table, the same IDNum can be used.
-
 
 -- #########################################################################################################################################################################################
 -- First create the Table
