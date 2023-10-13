@@ -1,9 +1,10 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysEntityStructureFieldDefaultValues_Tbl table
 -- Contains the defaults values of each field/column. You can customs multiple version of defaults values.
--- When entering a lot of data, some fields always have the same values, so if you define a version with default values for these fields, the system loads this value and you do not need to write them.
+-- When entering a lot of data, some fields always have the same values, so if you define a version with default values for these fields, the system loads this value and 
+-- you do not need to write them.
 -- The value of the field must be the same type of the field, defined in the SysEntityStructure_Tbl.
--- The primary key: are the union of the columns FieldIDn + EntityIDn + DefaultVersionIDn + BusinessUnitIDn
+-- The Unique key: are the union of the columns FieldIDn + EntityIDn + DefaultVersionIDn + BusinessUnitIDn
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
