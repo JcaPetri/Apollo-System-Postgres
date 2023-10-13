@@ -2,17 +2,17 @@
 -- Create the SysEntityStructureFieldProperties_Tbl table
 -- Contains the properties of each column/field of an table/Entity.
 -- Each field/column can have many properties, like DataType, Lenght, IsPrimaryKey, IsNotNull, etc.
--- The primary key: are the union of the columns FieldPropertyIDn + EntityStructureIDn (TblFieldIDn + EntityIDn)
--- The EntityStructureIDn has a FieldIDn + EntityIDn primary key.
+-- The Unique key: are the union of the columns FieldPropertyIDn + EntityStructureIDn (TblFieldIDn + EntityIDn)
+-- The EntityStructureIDn has a FieldIDn + EntityIDn Unique key.
 
 /*
 -- Fields that the user cant't modify
-	-- System fields, this fields are defined by the MySql or Java system, the user can't modify them.
+	-- System fields, this fields are defined by the Database or Java system, the user can't modify them.
 			260		ID
 			261		IDNum
 			364		CreatedByIDn
 			365		LastModifiedByIDn
-            			366		OwnerIDn
+            		366		OwnerIDn
 			367		DateCreated
 			368		DateTimeStamp
 			371		TableHistory
@@ -21,23 +21,23 @@
 			363		StateIDn
 
 -- FieldPropertyIDn
--- The field property define the types of properties that has the field/column.
+-- The field property define the types of properties that have the field/column.
 		37	FieldPropertyType		-- Scope = 3
 			DataType
 		2148	IsPrimaryKey		-- is a boolean type, 1 = true / 0 = false
-		2149	IsNotNull			-- is a boolean type, 1 = true / 0 = false
+		2149	IsNotNull		-- is a boolean type, 1 = true / 0 = false
 		2150	IsIndex			-- is a boolean type, 1 = true / 0 = false
-		2151	IsBinary			-- is a boolean type, 1 = true / 0 = false
-		2152	IsAutoIncremental		-- is a boolean type, 1 = true / 0 = false
-		2153	IsGeneratedField		-- is a boolean type, 1 = true / 0 = false
+		2151	IsBinary		-- is a boolean type, 1 = true / 0 = false
+		2152	IsAutoIncremental	-- is a boolean type, 1 = true / 0 = false
+		2153	IsGeneratedField	-- is a boolean type, 1 = true / 0 = false
 		2154	IsSystemGenerated	-- is a boolean type, 1 = true / 0 = false
 			IsOptionalField		-- is a boolean type, 1 = true / 0 = false
 		etc.
 
 -- If you want to set a field list, you must to combine some propertytypes
 Ejemplo:	Field		PropertyType		PropertyValue
-	ID		DataType			text
-             ID		ListBox			IDNum of the list (Red/Blue/etc)
+		ID		DataType		text
+        	ID		ListBox			IDNum of the list (Red/Blue/etc)
 	The list can be exclusive, or the user can enter his own values
 */
 
