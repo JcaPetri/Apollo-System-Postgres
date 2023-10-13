@@ -3,7 +3,7 @@
 -- Contains the business unit information. 
 -- The business unit exists since you create them in this table. 
 -- It`s information, of what are they, are in the BaseElement_Tbl table.
--- The primary key: is the BusinessUnitIDn field and must be unique for each Company.
+-- The unique key: is the BusinessUnitIDn field and must be unique for each Company.
 
 -- #########################################################################################################################################################################################
 -- First create the Table
