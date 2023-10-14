@@ -61,19 +61,41 @@ Here could be good to record in wich table this element had been created
 
 
 Definition: 
-Companies_Tbl, in this table you can record the companies that use the software. 
-CompanyTrees_Tbl, in this table you can develop the structure father/son. Then you can join each of them with the Business Unit. This type of structure allow you to get a individual or group report.
-BusinessUnit_Tbl, in this table you create the base comercial unit. This is the lower level of the company. 
-	Relationship between Companies_Tbl and BusinesUnit_Tbl is one Company can have multiple BusinessUnit, so in the BusinessUnit_Tbl you have the CompanyId key. 
-	Example: one company could have one or more BusinessUnits, each of which is very diferent business, like car sales or parts sales. 
-					To clear up, Tagle Group is the main Company, and Nixsa, Motcor, Avant are the BusinessUnits. 
-					When you define any concepts to a Tagle Group, these apply to all BusinessUnits that depend on.
+Companies_Tbl, contains the companies that use the software. 
 
+CompanyTrees_Tbl, contains the structure father/son. Here you can build the tree of the groups companies.
+Then you can join each of them with the Business Unit. This type of structure allow you to get a individual or group report.
+
+BusinessUnit_Tbl, contains the comercial unit. This is the lower level of the company. The BusinessUnit could be a car saler or a parts sales. Relationship between Companies_Tbl and BusinesUnit_Tbl is one Company can have multiple BusinessUnit, so in the BusinessUnit_Tbl you have the CompanyId key. Example: one company could have one or more BusinessUnits, each of which is very diferent business. To clear up, Tagle Group is the main Company, and Nixsa, Motcor, Avant are the Trade Units. When you define any concepts to a Tagle Group, these apply to all BusinessUnits that depend on.
+
+The tables structure are as follows:
+System Microservice
+Companies_Tbl
+CompaniesTrees_Tbl
+BusinessUnits_Tbl 
+
+Persons Microservice
+BusinessUnitsTradeUnits_Tbl
+TradeUnits_Tbl
+TradeUnitsPersons_Tbl
+Persons_Tbl
+
+Persons_Tbl, contains the personal basic data of persons. They can be a natural or a legal person. One person can be a Client or a supplier or both. 
+The persons exists since you create them in this table, and is the same for all system and belong to a Nationality.
+The unique key: are PersonKey + PersonKeyTypeIDn + NationalityIDn fields and must be unique. PersonKeyType can be DNI/LC/Passport/GreenCard and its depend of the country.
+The information of what are each code, are in the PerBaseElements_Tbl.
+
+TradeUnit_Tbl, contains the information of the minimal comercial client/supplier unit. Each record are a real comercial entity. This Minimal Comercial Unit (MCU) never changes, so that, you can have all the history of it. 
+The information of what are each code, are in the PerBaseElements_Tbl.
+Comments, 1- TradeUnit exists since you create them in this table. 
+2- One TradeUnit can have one or more Persons.
+The unique key: is the TradeUnitIDn + BusinessUnitIDn fields and must be unique.
+
+TradeUnitPerson_Tbl, contains the relationship between TradeUnit and Persons. Thats means One TradeUnit can have one or more Persons. 
 This structure allow you to handle diferent scenarios:
 1- If the Person chance the name or cuit, you can create another persona and mapped to the same TradeUnit, and set the old perons to desable. When you get the history you use the TradeUnit and not the PersonId.
 2- If the Person get divided, and get another PersonID. You can mapped old PersonId to another TradeUnit and the new PersonId join with the old TradeUnit. 
 With this schemas you can mapped the reality in the software. 
 
-Contains the Business Trade information. 
-One BusinessTrade can have many Persons. They are the real individual or legal entity.
-The unique key: is the BusinessTradeIDn + BusinessUnitIDn fields and must be unique.
+BusinessUnitsTradeUnits_Tbl, contains the relationship between BusinessUnits and TradeUnits. Here we construct the relation between the BusinessUnit Company with the client and/or the suppliers that are representing in the TradeUnits.
+Thats means One BusinessUnit can have one or more TradeUnits, and One TradeUnits can have one or more BusinessUnits.
