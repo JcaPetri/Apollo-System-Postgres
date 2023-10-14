@@ -1,15 +1,61 @@
-Estructura de todos los Microservicios y Sus relaciones
+Main Structure of all Microservices
 Group: com.apolo
-name: articles / system / persons / users
+Name: system / articles / persons / users
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+System Microservice
+Definitions:
+	It contains the system structure of all the software. In this module you need to create all the databases and java classes, enums, interfaces, entities, etc.
+	The main tables of this module will be in the other databases such as mirrors. These mirror tables will be updated via Kafka topics.
+	With this mechanism each microservice becames independent of the others. Example: MirSysCompanies, MirSysBusinessUnits, etc.
+	One important thing, is you make a mirror only of the records that need in the other microservice, not all the records that exists in the System Microservice.
+
+Structure are as follows:
+	Used to create the main elements
+		SysBaseElements_Tbl	--> Contains the diccionary of all system elements.
+		SysBaseElementLanguages_Tbl	--> Contains the meaning of the diccionary in other languages.
+		SysBaseElementComments_Tbl	--> Contains one or more comments/details/explains of each record of the diccionary.
+	Used to create the software structure
+		SysEntities_Tbl	--> Contains the entities of the system, they can be database tables or java classes.
+		SysEntityFields_Tbl	--> Contains the fields or the columns of the entities.
+		SysEntityStructures_Tbl	--> Contains each structure of the database tables or java classes.
+		SysEntityStructureFieldProperties_Tbl	--> Contains the properties of each field or column. They can be DataType, Lenght, etc.
+		SysEntityStructureFieldDefaultValues_Tbl	--> Contains the default value of each field or column. When you enter a value, you can set this and the user don't need to set.
+	Used to create the Companies and theis Structures
+		SysCompanies_Tbl	--> Contains the companies that use the software.
+		SysCompanyTree_Tbl	--> Contains the structure of each company. If you have a economic group in this table can build this structure. 
+	Used to create multiples tables
+		SysRootElements_Tbl	--> Contains the active element of the system. When you enter the IDNum in this table, you can use the value in other microservices. 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Detailed explanation of each table.
+	SysBaseElements_Tbl
+		It is the dictionary of the Articles module.
+		Each code entered generates an ID (uniqueidentifier) ​​and an IDNum unique autonumerical value.
+		The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
+		In order for the same IDName word to have different meanings depending on its use, it is defined for a Scope, BusinessUnit and Language.
+		To respect all the rules the unique value must be the combination of: Name/Scope/BusinessUnit/Language.
+		is unique for a:
+		  Name     -> is the code readable by the user
+		  Scope     -> the Name must be unique for the application Scope, usually a Table.
+		  BusinessUnit -> the Name must be unique for the BusinessUnit.
+		  Language -> the Name must be unique for Language. This dictionary has a default language defined.
+		Important: the object exits when it is created in the respective table, that it is created in the dictionary does not affect the system.
+		Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
+		The Scope and BusinessUnit combination can be the Kafka/rabbitMq topic.
+		
+Companies_Tbl
+CompaniesTrees_Tbl
+BusinessUnits_Tbl 
+
+Persons Microservice
+BusinessUnitsTradeUnits_Tbl
+TradeUnits_Tbl
+TradeUnitsPersons_Tbl
+Persons_Tbl
+
 
 Steps to build the Software:
-System Microservice
-It contains the system structure of all the software. In this module you need to create all the databases and java classes, enums, interfaces, entities, etc.
- Person Microservice
-It contains the persons who can interact with all the software. This person can be natural or legal. In this module you need to add all information about the address, locations, etc.
- User Microservice
-It contains the user of all the software. The user can be a natural or legal person, that had been created in the Person Microservice first. But in this module you need to add all information about the rights and duties of the users.
-
 Common Structure of each Microservice:
 General comments
 All values are created in tables. These tables work like a dictionary, so that, if you don't create them in the specific table it is as if they did not exist for the system. 
