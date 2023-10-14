@@ -68,3 +68,12 @@ BusinessUnit_Tbl, in this table you create the base comercial unit. This is the 
 	Example: one company could have one or more BusinessUnits, each of which is very diferent business, like car sales or parts sales. 
 					To clear up, Tagle Group is the main Company, and Nixsa, Motcor, Avant are the BusinessUnits. 
 					When you define any concepts to a Tagle Group, these apply to all BusinessUnits that depend on.
+
+This structure allow you to handle diferent scenarios:
+1- If the Person chance the name or cuit, you can create another persona and mapped to the same TradeUnit, and set the old perons to desable. When you get the history you use the TradeUnit and not the PersonId.
+2- If the Person get divided, and get another PersonID. You can mapped old PersonId to another TradeUnit and the new PersonId join with the old TradeUnit. 
+With this schemas you can mapped the reality in the software. 
+
+Contains the Business Trade information. 
+One BusinessTrade can have many Persons. They are the real individual or legal entity.
+The unique key: is the BusinessTradeIDn + BusinessUnitIDn fields and must be unique.
