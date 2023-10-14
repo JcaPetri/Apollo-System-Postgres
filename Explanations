@@ -58,3 +58,13 @@ When you insert comments you must define the language, the order when there are 
 Data Root Element
 It contains all elements that have been created out of the dataElement table. Example: when you create the element in the articles tables, you must create it in the RootElement table. 
 Here could be good to record in wich table this element had been created
+
+
+Definition: 
+Companies_Tbl, in this table you can record the companies that use the software. 
+CompanyTrees_Tbl, in this table you can develop the structure father/son. Then you can join each of them with the Business Unit. This type of structure allow you to get a individual or group report.
+BusinessUnit_Tbl, in this table you create the base comercial unit. This is the lower level of the company. 
+	Relationship between Companies_Tbl and BusinesUnit_Tbl is one Company can have multiple BusinessUnit, so in the BusinessUnit_Tbl you have the CompanyId key. 
+	Example: one company could have one or more BusinessUnits, each of which is very diferent business, like car sales or parts sales. 
+					To clear up, Tagle Group is the main Company, and Nixsa, Motcor, Avant are the BusinessUnits. 
+					When you define any concepts to a Tagle Group, these apply to all BusinessUnits that depend on.
