@@ -2,7 +2,7 @@ Main Structure of all Microservices
 Group: com.apolo
 Name: system / articles / persons / users
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+========================================================================================================================================================================================
 System Microservice
 Definitions:
 	Contains the system structure of all the software. In this module you need to create all the databases and java classes, enums, interfaces, entities, etc.
@@ -33,32 +33,46 @@ Detailed explanation of each table.
 	Used to create the main elements
 		SysBaseElements_Tbl
 			Contains the diccionary of all system elements of the Microservice.
-			Each code entered generates an ID (uniqueidentifier) ​​and an IDNum unique autonumerical value.
+			For each code entered generates an ID (uniqueidentifier) ​​and an IDNum unique auto-numeric value are generated.
 			The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
 			In order for the same IDName word to have different meanings depending on its use, it is defined for a Scope, BusinessUnit and Language.
 			To respect all the rules the unique value must be the combination of: Name/Scope/BusinessUnit/Language.
 			The unique Key is the union of:
-			  Name     		-> is the readable code by the user.
-			  Scope     	-> the Name must be unique for the application Scope, usually a Table.
-			  BusinessUnit 	-> the Name must be unique for the BusinessUnit.
-			  Language 		-> the Name must be unique for Language. This dictionary has a default language defined.
+			  IDName     		-> is the readable code by the user.
+			  ScopeIDn     		-> the Name must be unique for the application Scope, usually a Table.
+			  BusinessUnitIDn 	-> the Name must be unique for the BusinessUnit.
+			  LanguageIDn 		-> the Name must be unique for Language. This dictionary has a default language defined.
 			Important: when you create the element/object in this tabel, this element don't exits for the software. This table is like a dictionary.
-					Only exist when you create the code in the specific table.
+						Only exist when you create the code in the specific table.
 				Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
+			Modification Rules:
+				You can change the Name if there is a spelling error. Example you have an spelling error in a invoce and must be invoice.
+				Warning: If I change the code that represents the word Invoice and it is an afip receipt. And I put food, everywhere the code is, food will start to appear.
+				If you want to change the code and it is in many places, the system must generate another code for the new value
+				To change this value, it must be done by the administrator. 
+				It is best to never change it.
+			Comments:
+				In each microservice and database, you have one DataElement_Tbl. It work as a specific dictionary for it.
+				Example:
+					In the System Microservice you have the meaning of all databases tables, columns, stored procedures, views, java entities, classes, etc.
+					In the Person Microservice you have the meaning of all person (legal or natural) whom can interact with the system.
+					In the Users Microservice you have the meaning of all person who can enter in the system to work with. 
+					In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
 			Tips:
-				The Scope and BusinessUnit combination can be the Kafka/rabbitMq topic.
-	
+				The ScopeIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.	 (+ MicroserviceIDn + )
+
 		SysBaseElementLanguages_Tbl	
 			Contains the meaning of the diccionary in another languages than the default.
 			In this table you have to comply with the same rules as the TBaseElement table.
 			The unique Key is the union of:
-			  	-- This two values are defined by the user.
-			  	Name     		-> is the readable code by the user.
-			  	Language 		-> the Name must be unique for the new Language. It must be diferent from the default language.
+			  	IDNum			--> Is the number unique autonumerical value. It is created in the SysBaseElements_Tbl.
+				-- This two values are defined by the user.
+			  	IDName     		-> is the readable code by the user.
+			  	LanguageIDn 	-> the Name must be unique for the new Language. It must be diferent from the default language.
 			  	-- This two values are set by the system automaticaly, and are the same as the SysBaseElement_Tbl. For do that use the IdNum.
 			  	BaseElementLanguageIDn	--> the IdNum of the element that has another langueges.
-			  	Scope     	-> the Name must be unique for the application Scope, usually a Table.
-			  	BusinessUnit 	-> the Name must be unique for the BusinessUnit.
+			  	ScopeIDn     	-> the Name must be unique for the application Scope, usually a Table.
+			  	BusinessUnitIDn	-> the Name must be unique for the BusinessUnit.
 			Clarification: the values IdNum, ScopeIDn, CompanyIDn = are always equal to the ApplTDataElement table. 
 					These columns are put in this table only to ensure integrity and that there are no duplicates.
 	
@@ -92,20 +106,25 @@ Detailed explanation of each table.
 				MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
 				BusinessUnitID	--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
 			Important:
-				The System Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
-				The data is created in the BaseElement_Tbl and is the same to all the microservice.
+				The Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
+				The data is created in the BaseElement_Tbl and is the same to all the BusinessUnit.
 				When I create the entity, I define the business unit owner and the microservice it belongs to.
 				That is the reason why you generate a new ID and IdNum for this table. 
-				Tips:
-					The RootElementIDn + MicroserviceIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.		 
+			Tips:
+				The EntityIDn + MicroserviceIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.		 
 	
 		SysEntities_Tbl	
-			Contains the entities of the system, they can be database tables or java classes.
-			The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
-	
+			Contains the fields or the columns of the entities.
+			The fields exits to the entity, since you create it in this table. It´s information, of what are they, are in the BaseElement table.
+			The unique Key is the union of:
+				FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
+				BusinessUnitIDn	--> The BusinessUnitIDn is the business unit that the entities belong. Link with the SysCompany.
+				MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
+				BusinessUnitID	--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
 
 
-
+The primary key: is the union of FieldIDn + BusinessUnitID.
+Since no field defined in BaseElement_Tbl is modified in this table, the same IDNum can be used.
 
 
 
@@ -131,35 +150,6 @@ Common Structure of each Microservice:
 			Second create a warehouse in TBaseElement and then in the LogTWarehouses tables
 			To make a relation between Articles and Warehouses you make it joining the tables LogTArticles and LogTWarehouses. 
 			You use the TBaseElement table to get the meaning of each code.
-
-
-Data Element
-This is the dictionary table for the system records. For each code entered, an ID (uniqueidentifier) and a unique auto-numeric value are generated. This code is used in the others tables, if you want to know what are the meaning of one code, here you can look for.
-It contains the information generated by the users of the system. Depending of the type of microservices is the kind of information that are in this tables. Example:
-In the System Microservice you have the meaning of all databases tables, columns, stored procedures, views, etc. For java software you have the entities, classes, etc.
-In the Person Microservice you have the meaning of all person (legal or natural) whom can interact with the system. They coul be suppliers or clients.
-In the Users Microservice you have the meaning of all person who can enter in the system to work with. 
-In the Articles Microservice you have the meaning of all the articles that the campany can handle, to sell, buy, or have to use. 
-It is unique for a:
--- Name (it is the code readable by the user).
--- Scope (the Name must be unique for the scope, wich usually represents a tables).
--- Company (the Name must be unique for the Company).
--- Language (the Name must be unique for the default language)
-This way we make sure we do not duplicate information, and we have that a Name is unique for a Company, Scope (Table) and a Language.
-The rest of the tables have a link to this table to identify what type of element it is.
-
-Modification Rules:
-You can change the Name if there is a spelling error. Example you have an spelling error in a invoce and must be invoice.
-Warning: If I change the code that represents the word Invoice and it is an afip receipt. And I put food, everywhere the code is, food will start to appear.
-If you want to change the code and it is in many places, the system must generate another code for the new value
-
-Tips:
-To change this value, it must be done by the administrator. It is best to never change it.
-
-Tips:
-The combination of MicroserviceName-CompanyScope is the ID for kafka software.
-Ex: SystemPeperinaTables
-
 
 
 Definition: 
