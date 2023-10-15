@@ -57,9 +57,13 @@ Detailed explanation of each table.
 		  Scope     	-> the Name must be unique for the application Scope, usually a Table.
 		  BusinessUnit 	-> the Name must be unique for the BusinessUnit.
 
-
 	SysBaseElementComments_Tbl	
-		Contains one or more comments/details/explains of each record of the diccionary.
+		Contains one or more descriptions/comments/details/explains of each record of the diccionary.
+		It has a defined language, an order when there is more than one description, a MimeType text format, a status and the date of the last update.
+
+	SysEntities_Tbl	
+		Contains the entities of the system, they can be database tables or java classes.
+
 
 Companies_Tbl
 CompaniesTrees_Tbl
