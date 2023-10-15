@@ -46,6 +46,20 @@ Detailed explanation of each table.
 		Tips:
 			The Scope and BusinessUnit combination can be the Kafka/rabbitMq topic.
 
+	SysBaseElementLanguages_Tbl	
+		Contains the meaning of the diccionary in other languages.
+		is unique for a:
+		  -- This two values are defined by the user.
+		  Name     		-> is the readable code by the user.
+		  Language 		-> the Name must be unique for the new Language. It must be diferent from the default language.
+		  -- This two values are set by the system automaticaly, and are the same as the SysBaseElement_Tbl. For do that use the IdNum.
+		  BaseElementLanguageIDn	--> the IdNum of the element that has another langueges.
+		  Scope     	-> the Name must be unique for the application Scope, usually a Table.
+		  BusinessUnit 	-> the Name must be unique for the BusinessUnit.
+
+
+	SysBaseElementComments_Tbl	
+		Contains one or more comments/details/explains of each record of the diccionary.
 
 Companies_Tbl
 CompaniesTrees_Tbl
