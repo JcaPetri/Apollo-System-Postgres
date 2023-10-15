@@ -12,7 +12,7 @@ Definitions:
 
 Structure are as follows:
 	Used to create the main elements
-		SysBaseElements_Tbl	--> Contains the diccionary of all system elements.
+		SysBaseElements_Tbl	--> Contains the diccionary of all system elements of the Microservice.
 		SysBaseElementLanguages_Tbl	--> Contains the meaning of the diccionary in other languages.
 		SysBaseElementComments_Tbl	--> Contains one or more comments/details/explains of each record of the diccionary.
 	Used to create the software structure
@@ -30,20 +30,23 @@ Structure are as follows:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Detailed explanation of each table.
 	SysBaseElements_Tbl
-		It is the dictionary of the Articles module.
+		Contains the diccionary of all system elements of the Microservice.
 		Each code entered generates an ID (uniqueidentifier) ​​and an IDNum unique autonumerical value.
 		The rest of the tables only have the IDNum. To determine what a code means, you should consult this table.
 		In order for the same IDName word to have different meanings depending on its use, it is defined for a Scope, BusinessUnit and Language.
 		To respect all the rules the unique value must be the combination of: Name/Scope/BusinessUnit/Language.
 		is unique for a:
-		  Name     -> is the code readable by the user
-		  Scope     -> the Name must be unique for the application Scope, usually a Table.
-		  BusinessUnit -> the Name must be unique for the BusinessUnit.
-		  Language -> the Name must be unique for Language. This dictionary has a default language defined.
-		Important: the object exits when it is created in the respective table, that it is created in the dictionary does not affect the system.
-		Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
-		The Scope and BusinessUnit combination can be the Kafka/rabbitMq topic.
-		
+		  Name     	-> is the readable code by the user.
+		  Scope     	-> the Name must be unique for the application Scope, usually a Table.
+		  BusinessUnit 	-> the Name must be unique for the BusinessUnit.
+		  Language 	-> the Name must be unique for Language. This dictionary has a default language defined.
+		Important: when you create the element/object in this tabel, this element don't exits for the software. This table is like a dictionary.
+				Only exist when you create the code in the specific table.
+			Example: the pampa article is created in the dictionary, but it does not exist until it is created in the Articles table.
+		Tips:
+			The Scope and BusinessUnit combination can be the Kafka/rabbitMq topic.
+
+
 Companies_Tbl
 CompaniesTrees_Tbl
 BusinessUnits_Tbl 
