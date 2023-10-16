@@ -1,10 +1,22 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysRootElements_Tbl table
--- Contains the system element that are enable; like Language / Money / TimeZone / DataType / etc. 
--- The elements exists since you create them in this table. 
--- It`s information, of what are they, are in the BaseElement_Tbl table.
--- The primary key: is the union of RootElementIDn + MicroserviceIDn + BusinessUnitID.
--- When MicroserviceIDn = System, all microservices have acces to them.
+/*Contains the other element of the system. 
+	When you enter the IDNum in this table, you active the element to be used in other microservices. 
+	The key for each record:
+		ID		--> is the uniqueidentifier auto generated.
+		IDNum	--> is the autoincrement number auto generated.
+		This table has its own key only for update it. 
+		The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
+	The unique Key is the union of:
+		RootElementIDn 		--> the IdNum of the entity
+		MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
+		BusinessUnitIDn		--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
+	Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can't use it.
+			 To make real and enable these values, we must to create a specific table for its. 
+			 But if you are going to use only somes record of each tables, is bether have one table with all small tables. This table is called SysRootElement_Tbl.
+	Tips:
+		The RootElementIDn + MicroserviceIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.
+*/
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -61,11 +73,23 @@ ALTER TABLE IF EXISTS public."SysRootElements_Tbl"
 -- Create the comments of the table fields elements
 -- 
 COMMENT ON TABLE public."SysRootElements_Tbl"
-    IS '-- Contains the system element that are enable; like Language / Money / TimeZone / DataType / etc. 
-The elements exists since you create them in this table. 
-It`s information, of what are they, are in the BaseElement_Tbl table.
-The primary key: is the union of RootElementIDn + MicroserviceIDn + BusinessUnitID.
-When MicroserviceIDn = System, all microservices have acces to them.';
+    IS 'Contains the other element of the system. 
+	When you enter the IDNum in this table, you active the element to be used in other microservices. 
+	The key for each record:
+		ID		--> is the uniqueidentifier auto generated.
+		IDNum	--> is the autoincrement number auto generated.
+		This table has its own key only for update it. 
+		The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
+	The unique Key is the union of:
+		RootElementIDn 		--> the IdNum of the entity
+		MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
+		BusinessUnitIDn		--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
+	Example: In the BaseElement_Tbl you have been created all values of the SysContries or SysLangueges, etc. This table is the diccionary and this values can't use it.
+			 To make real and enable these values, we must to create a specific table for its. 
+			 But if you are going to use only somes record of each tables, is bether have one table with all small tables. This table is called SysRootElement_Tbl.
+	Tips:
+		The RootElementIDn + MicroserviceIDn + BusinessUnitIDn combination can be the Kafka/rabbitMq topic.
+';
 
 COMMENT ON COLUMN public."SysRootElements_Tbl"."IDNum"
     IS 'The IDNum is the autoincrement number';
