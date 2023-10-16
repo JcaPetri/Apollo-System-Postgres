@@ -4,7 +4,7 @@
 Contains the fields or the columns of the entities.
 The fields exits to the entity, since you create it in this table. It´s information, of what are they, are in the BaseElement table.
 The key for each record:
-	This table hasn't its own key, because here we only enable one field/column to a Microservice and BusinessUnit,
+	This table has not its own key, because here we only enable one field/column to a Microservice and BusinessUnit,
 The unique Key is the union of:
 	FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
 	MicroserviceIDn --> The MicroserviceIDn is the IDNum of the microservice to which the field belongs. If its value is System all microservices have access to it.
@@ -56,7 +56,7 @@ COMMENT ON TABLE public."SysEntityFields_Tbl"
 Contains the fields or the columns of the entities.
 The fields exits to the entity, since you create it in this table. It´s information, of what are they, are in the BaseElement table.
 The key for each record:
-	This table hasn't its own key, because here we only enable one field/column to a Microservice and BusinessUnit,
+	This table has not its own key, because here we only enable one field/column to a Microservice and BusinessUnit,
 The unique Key is the union of:
 	FieldIDn 		--> The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.
 	MicroserviceIDn --> The MicroserviceIDn is the IDNum of the microservice to which the field belongs. If its value is System all microservices have access to it.
@@ -64,18 +64,18 @@ The unique Key is the union of:
 
 Common Field/Columns for all tables
 	The objective of these are to store critical information for the system and the record history.
-		StatedIDn 			--> The StatedIDn is the IDNum that define if the record is enable or not.
+		StatedIDn 		--> The StatedIDn is the IDNum that define if the record is enable or not.
 		CreatedByIDn		--> The CreatedByIDn is the IDNum of the user who created the record.
 		LastModifiedByIDn	--> The LastModifiedByIDn is the IDNum of the last user who modified the record.
-		OwnerIDn			--> The OwnerIDn is the IDNum of the record owner.
-		DateCreated			--> The DateCreated is the record creation datetime UTC.
+		OwnerIDn		--> The OwnerIDn is the IDNum of the record owner.
+		DateCreated		--> The DateCreated is the record creation datetime UTC.
 		DateTimeStamp		--> The DateTimeStamp is the datetime UTC of the last modification.
-		TableHistory		-->	The TableHistory contain then change history of each column.';
+		TableHistory		--> The TableHistory contain then change history of each column.';
 
 COMMENT ON COLUMN public."SysEntityFields_Tbl"."FieldIDn"
     IS 'The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.';
 
-COMMENT ON COLUMN public."SysEntities_Tbl"."MicroserviceIDn"
+COMMENT ON COLUMN public."SysEntityFields_Tbl"."MicroserviceIDn"
     IS 'The MicroserviceIDn is the IDNum of the microservice to which the entity belongs. If its value is System all microservices have access to it.';
 
 COMMENT ON COLUMN public."SysEntityFields_Tbl"."BusinessUnitIDn"
