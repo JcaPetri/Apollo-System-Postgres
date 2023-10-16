@@ -30,6 +30,7 @@ DROP TABLE IF EXISTS public."SysEntityFields_Tbl" CASCADE;
 CREATE TABLE IF NOT EXISTS public."SysEntityFields_Tbl"
 (
     "FieldIDn" integer NOT NULL,
+    "MicroserviceIDn" integer NOT NULL,	
     "BusinessUnitIDn" integer NOT NULL,
     "StateIDn" smallint NOT NULL,
     "CreatedByIDn" integer NOT NULL,
@@ -39,7 +40,7 @@ CREATE TABLE IF NOT EXISTS public."SysEntityFields_Tbl"
     "DateTimeStamp" timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "TableHistory" text COLLATE pg_catalog."default",
     CONSTRAINT "SefPk_FieldIDn" PRIMARY KEY ("FieldIDn"),
-    CONSTRAINT "SefUnique_IDnFieldBusinessUnit" UNIQUE ("FieldIDn", "BusinessUnitIDn")
+    CONSTRAINT "SefUnique_IDnFieldBusinessUnit" UNIQUE ("FieldIDn", "MicroserviceIDn", "BusinessUnitIDn")
 )
 
 TABLESPACE pg_default;
@@ -73,6 +74,9 @@ Common Field/Columns for all tables
 
 COMMENT ON COLUMN public."SysEntityFields_Tbl"."FieldIDn"
     IS 'The FieldIDn is the IDNum of the field. Link with the diccionary table - SysBaseElement.';
+
+COMMENT ON COLUMN public."SysEntities_Tbl"."MicroserviceIDn"
+    IS 'The MicroserviceIDn is the IDNum of the microservice to which the entity belongs. If its value is System all microservices have access to it.';
 
 COMMENT ON COLUMN public."SysEntityFields_Tbl"."BusinessUnitIDn"
     IS 'The BusinessUnitIDn is the business unit that the entities belong. Link with the SysCompany.';
@@ -181,6 +185,7 @@ BEGIN
 		v_TableHistoryOld := OLD."TableHistory";
 		v_TableHistory = '';
 		IF NEW."FieldIDn" <> OLD."FieldIDn" THEN v_TableHistory := OLD."FieldIDn"; ELSE v_TableHistory := '†'; END IF;
+		IF NEW."MicroserviceIDn" <> OLD."MicroserviceIDn" THEN v_TableHistory := OLD."MicroserviceIDn"; ELSE v_TableHistory := '†'; END IF;
 		IF NEW."BusinessUnitIDn" <> OLD."BusinessUnitIDn" THEN v_TableHistory := OLD."BusinessUnitIDn"; ELSE v_TableHistory := '†'; END IF;
 		IF NEW."StateIDn" <> OLD."StateIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."StateIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW."CreatedByIDn" <> OLD."CreatedByIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."CreatedByIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
