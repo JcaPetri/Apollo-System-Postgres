@@ -228,3 +228,38 @@ Detailed explanation of each table.
 				One company can have one or more than a BusinessUnit.
 
 ========================================================================================================================================================================================
+Postgres Queries
+	Used to create the main elements
+		SysBaseElements_Tbl	--> Contains the diccionary of all system elements of the Microservice.
+			SELECT * FROM public."SysBaseElements_Tbl";
+		SysBaseElementLanguages_Tbl	--> Contains the meaning of the diccionary in other languages.
+			
+		SysBaseElementComments_Tbl	--> Contains one or more comments/details/explains of each record of the diccionary.
+			
+	Used to create multiples tables
+		SysRootElements_Tbl	--> Contains the other element of the system. When you enter the IDNum in this table, you active the element to be used in other microservices. 
+			SELECT * FROM public."SysBaseElements_Tbl";
+	Used to create the software structure
+		SysEntities_Tbl	--> Contains the entities of the system, they can be database tables or java classes.
+			SELECT * FROM public."SysEntities_Tbl";
+		SysEntityFields_Tbl	--> Contains the fields or the columns of the entities.
+			SELECT * FROM public."SysEntityFields_Tbl";
+		SysEntityStructures_Tbl	--> Contains each structure of the database tables or java classes.
+			SELECT * FROM public."SysEntityStructures_Tbl";
+		SysEntityStructureFieldProperties_Tbl	--> Contains the properties of each field or column. They can be DataType, Lenght, etc.
+			SELECT * FROM public."SysEntityStructureFieldProperties_Tbl";
+		SysEntityStructureFieldDefaultValues_Tbl	--> Contains the default value of each field or column. When you set a value for a column, if the user don't enter, the system get from this table the value to enter.
+			SELECT * FROM public."SysEntityStructureFieldDefaultValues_Tbl";
+	Used to create the Companies and theis Structures
+		SysCompanies_Tbl	--> Contains the companies that use the software.
+			SELECT * FROM public."SysCompanies_Tbl";
+		SysCompanyTree_Tbl	--> Contains the structure of each company. If you have a economic group in this table can build this structure. 
+			
+		SysBusinessUnits_Tbl	--> Contains the business units that belong to the company.
+			SELECT * FROM public."SysBusinessUnits_Tbl";
+
+
+
+
+
+
