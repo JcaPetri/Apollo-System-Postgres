@@ -1,9 +1,26 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysEntityStructureFieldProperties_Tbl table
--- Contains the properties of each column/field of an table/Entity.
--- Each field/column can have many properties, like DataType, Lenght, IsPrimaryKey, IsNotNull, etc.
--- The Unique key: are the union of the columns FieldPropertyIDn + EntityStructureIDn (TblFieldIDn + EntityIDn)
--- The EntityStructureIDn has a FieldIDn + EntityIDn Unique key.
+/*
+Contains the properties of each column/field of an table/Entity.
+Each field/column can have many properties, like DataType, Lenght, IsPrimaryKey, IsNotNull, etc.
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+	FieldPropertyIDn	--> The FieldPropertyIDn is the IDNum of the field property type. Link with the SysBaseElement_Tbl.
+	EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.
+							The EntityStructureIDn has a FieldIDn + EntityIDn primary key.
+The table operation:
+	To enter the data you need the combination of two field, they are:
+		FieldValueTypeIDn	--> The FieldValueTypeIDn is the IDNum of the type property. Its come from the SysBaseElement.
+		FieldValue			--> The FieldValue is a numeric/text/etc value of the property, this value is not standar and can´t be multilanguage.
+								If the value is an IDNumType, the meaning is in the ArticleOptionalFields_Tbl.
+	Example: You have a Name column. You can set the datatype as string, and the length of the string in 20.
+			 First you add two record, one for datatype and one for length.
+			 DataType is a String type and is defined in the BaseElement_Tbl, so you only set the IDNum to the FieldValue. 
+					Because the IDNum is a numeric value, you set the FieldValueTypeIDn with SysElementType.
+			 Length is a numeric, so you enter the value in the FieldValue. You set the FieldValueTypeIDn wiht integer java type.
+*/
 
 /*
 -- Fields that the user cant't modify
@@ -100,8 +117,24 @@ ALTER TABLE IF EXISTS public."SysEntityStructureFieldProperties_Tbl"
 COMMENT ON TABLE public."SysEntityStructureFieldProperties_Tbl"
     IS 'Contains the properties of each column/field of an table/Entity.
 Each field/column can have many properties, like DataType, Lenght, IsPrimaryKey, IsNotNull, etc.
-The primary key: are the union of the columns FieldPropertyIDn + EntityStructureIDn (TblFieldIDn + EntityIDn)
-The EntityStructureIDn has a FieldIDn + EntityIDn primary key.';
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+	FieldPropertyIDn	--> The FieldPropertyIDn is the IDNum of the field property type. Link with the SysBaseElement_Tbl.
+	EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.
+							The EntityStructureIDn has a FieldIDn + EntityIDn primary key.
+The table operation:
+	To enter the data you need the combination of two field, they are:
+		FieldValueTypeIDn	--> The FieldValueTypeIDn is the IDNum of the type property. Its come from the SysBaseElement.
+		FieldValue			--> The FieldValue is a numeric/text/etc value of the property, this value is not standar and can´t be multilanguage.
+								If the value is an IDNumType, the meaning is in the ArticleOptionalFields_Tbl.
+	Example: You have a Name column. You can set the datatype as string, and the length of the string in 20.
+			 First you add two record, one for datatype and one for length.
+			 DataType is a String type and is defined in the BaseElement_Tbl, so you only set the IDNum to the FieldValue. 
+					Because the IDNum is a numeric value, you set the FieldValueTypeIDn with SysElementType.
+			 Length is a numeric, so you enter the value in the FieldValue. You set the FieldValueTypeIDn wiht integer java type.
+';
 
 COMMENT ON COLUMN public."SysEntityStructureFieldProperties_Tbl"."IDNum"
     IS 'The IDNum is the autoincrement number';
