@@ -1,13 +1,23 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysEntities_Tbl table
--- Contains the entities information. 
--- The entities exists since you create them in this table. 
--- It's information, of what are they, are in the BaseElement_Tbl table.
--- The primary key: is the union of EntityIDn + MicroserviceIDn + BusinessUnitID.
--- When MicroserviceIDn = System, all microservices have acces to them.
--- The System Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
--- The data is created in the BaseElement_Tbl in the System BusinessUnit, and is the same to all the microservice.
--- When I create the entity, I define the business unit owner and the microservice it belongs to.
+/*
+Contains the entities of the system, they can be database tables or java classes.
+The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+	EntityIDn 		--> the IdNum of the entity
+	MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
+	BusinessUnitID	--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
+Important:
+	The Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
+	The data is created in the BaseElement_Tbl and is the same to all the BusinessUnit.
+	When I create the entity, I define the business unit owner and the microservice it belongs to.
+	That is the reason why you generate a new ID and IdNum for this table. 
+Kafka/rabbitMq Topic:
+	The combination of EntityIDn + MicroserviceIDn + BusinessUnitIDn combination can be used.	
+*/
 
 
 -- #########################################################################################################################################################################################
@@ -65,13 +75,23 @@ ALTER TABLE IF EXISTS public."SysEntities_Tbl"
 -- Create the comments of the table fields elements
 -- 
 COMMENT ON TABLE public."SysEntities_Tbl"
-    IS 'Contains the entities information. 
+    IS 'Contains the entities of the system, they can be database tables or java classes.
 The entity exist since you create it in this table. It´s information, of what are they, are in the BaseElement table.
-The primary key: is the union of EntityIDn + MicroserviceIDn + BusinessUnitID.
-When MicroserviceIDn = System, all microservices have acces to them.
-The System Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
-The data is created in the BaseElement_Tbl in the System BusinessUnit, and is the same to all the microservice.
-When I create the entity, I define the business unit owner and the microservice it belongs to.';
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+	EntityIDn 		--> the IdNum of the entity
+	MicroserviceIDn --> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices hava access to them.
+	BusinessUnitID	--> the IdNum of the BusinessUnit that the Entity and Microservice belong.
+Important:
+	The Entity is generated in the SysEntities_Tbl for a BusinessUnit and Microservice.
+	The data is created in the BaseElement_Tbl and is the same to all the BusinessUnit.
+	When I create the entity, I define the business unit owner and the microservice it belongs to.
+	That is the reason why you generate a new ID and IdNum for this table. 
+Kafka/rabbitMq Topic:
+	The combination of EntityIDn + MicroserviceIDn + BusinessUnitIDn combination can be used.
+';
 
 COMMENT ON COLUMN public."SysEntities_Tbl"."IDNum"
     IS 'The IDNum is the autoincrement number';
