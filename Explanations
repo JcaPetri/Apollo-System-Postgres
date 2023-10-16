@@ -210,78 +210,21 @@ Detailed explanation of each table.
 				BusinessUnitIDn		--> The CompanyIDn is the company that the business unit belong. Link with the SysCompanies_Tbl.
 
 		SysCompanyTree_Tbl
-			Contains the structure of each company. If you have a economic group in this table can build this structure. 
+			Contains the structure of each company. If you have a economic group in this table can build this structure.
+			Here you can build the tree of the groups companies using the father/son schema.
+			This type of structure allow you to get a individual or group report.
+			<<<<<<<<<<<<<<<<<<<<<<<<<<< Pending of Development >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 		SysBusinessUnits_Tbl
 			Contains the business units that belong to the company.
-			The business unit exists since you create them in this table and you assing to a Company. It`s information, of what are they, are in the BaseElement_Tbl table.
+			The business unit exists since you create them in this table and you assing it to a Company. It`s information, of what are they, are in the BaseElement_Tbl table.
 			The key for each record:
 				This table hasn't its own key, because in this table you only enable the business unit to a company to all the system.
 			The unique Key is the union of:
 				BusinessUnitIDn		--> The BusinessUnitIDn is the IDNum of the business unit. Link with the SysBaseElement_Tbl.
 				CompanyIDn			--> The CompanyIDn is the company that the business unit belong. Link with the SysCompany_Tbl.
+			The table operation:
+				After you create the BusinessUnit in the BaseElement table, you add it to this table and assign it to a specific Company. 
+				One company can have one or more than a BusinessUnit.
 
-			
-
-Companies_Tbl
-CompaniesTrees_Tbl
-BusinessUnits_Tbl 
-
-Persons Microservice
-BusinessUnitsTradeUnits_Tbl
-TradeUnits_Tbl
-TradeUnitsPersons_Tbl
-Persons_Tbl
-
-
-Steps to build the Software:
-Common Structure of each Microservice:
-
-	General comments
-		All values are created in tables. These tables work like a dictionary, so that, if you don't create them in the specific table it is as if they did not exist for the system. 
-		Example: the steps to create an Article and a Warehouse and then make a relation between them are:
-			First create an article in TBaseElement and then in the LogTArticles tables
-			Second create a warehouse in TBaseElement and then in the LogTWarehouses tables
-			To make a relation between Articles and Warehouses you make it joining the tables LogTArticles and LogTWarehouses. 
-			You use the TBaseElement table to get the meaning of each code.
-
-
-Definition: 
-Companies_Tbl, contains the companies that use the software. 
-
-CompanyTrees_Tbl, contains the structure father/son. Here you can build the tree of the groups companies.
-Then you can join each of them with the Business Unit. This type of structure allow you to get a individual or group report.
-
-BusinessUnit_Tbl, contains the comercial unit. This is the lower level of the company. The BusinessUnit could be a car saler or a parts sales. Relationship between Companies_Tbl and BusinesUnit_Tbl is one Company can have multiple BusinessUnit, so in the BusinessUnit_Tbl you have the CompanyId key. Example: one company could have one or more BusinessUnits, each of which is very diferent business. To clear up, Tagle Group is the main Company, and Nixsa, Motcor, Avant are the Trade Units. When you define any concepts to a Tagle Group, these apply to all BusinessUnits that depend on.
-
-The tables structure are as follows:
-System Microservice
-Companies_Tbl
-CompaniesTrees_Tbl
-BusinessUnits_Tbl 
-
-Persons Microservice
-BusinessUnitsTradeUnits_Tbl
-TradeUnits_Tbl
-TradeUnitsPersons_Tbl
-Persons_Tbl
-
-Persons_Tbl, contains the personal basic data of persons. They can be a natural or a legal person. One person can be a Client or a supplier or both. 
-The persons exists since you create them in this table, and is the same for all system and belong to a Nationality.
-The unique key: are PersonKey + PersonKeyTypeIDn + NationalityIDn fields and must be unique. PersonKeyType can be DNI/LC/Passport/GreenCard and its depend of the country.
-The information of what are each code, are in the PerBaseElements_Tbl.
-
-TradeUnit_Tbl, contains the information of the minimal comercial client/supplier unit. Each record are a real comercial entity. This Minimal Comercial Unit (MCU) never changes, so that, you can have all the history of it. 
-The information of what are each code, are in the PerBaseElements_Tbl.
-Comments, 1- TradeUnit exists since you create them in this table. 
-2- One TradeUnit can have one or more Persons.
-The unique key: is the TradeUnitIDn + BusinessUnitIDn fields and must be unique.
-
-TradeUnitPerson_Tbl, contains the relationship between TradeUnit and Persons. Thats means One TradeUnit can have one or more Persons. 
-This structure allow you to handle diferent scenarios:
-1- If the Person chance the name or cuit, you can create another persona and mapped to the same TradeUnit, and set the old perons to desable. When you get the history you use the TradeUnit and not the PersonId.
-2- If the Person get divided, and get another PersonID. You can mapped old PersonId to another TradeUnit and the new PersonId join with the old TradeUnit. 
-With this schemas you can mapped the reality in the software. 
-
-BusinessUnitsTradeUnits_Tbl, contains the relationship between BusinessUnits and TradeUnits. Here we construct the relation between the BusinessUnit Company with the client and/or the suppliers that are representing in the TradeUnits.
-Thats means One BusinessUnit can have one or more TradeUnits, and One TradeUnits can have one or more BusinessUnits.
+========================================================================================================================================================================================
