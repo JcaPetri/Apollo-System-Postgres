@@ -1,11 +1,24 @@
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 -- Create the SysEntityStructureFieldDefaultValues_Tbl table
--- Contains the defaults values of each field/column. You can customs multiple version of defaults values.
--- When entering a lot of data, some fields always have the same values, so if you define a version with default values for these fields, the system loads this value and 
--- you do not need to write them.
--- The value of the field must be the same type of the field, defined in the SysEntityStructure_Tbl.
--- The Unique key: are the union of the columns FieldIDn + EntityIDn + DefaultVersionIDn + BusinessUnitIDn
-
+/*
+Contains the default value of each field or column. When you set a value for a column, if the user do not enter, the system get from this table the value to enter.
+The value of the field must be the same type of the field, defined in the SysEntityStructure_Tbl.
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+	FieldDefaultValue	--> The value of the Field. The value have to comply the rules of the FieldProperties.
+	DefaultVersionIDn	--> The DefaultVersionIDn is the IDNum of the DefaultVersion, defined in the SysBaseElement_Tbl.
+	EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.
+							The EntityStructureIDn has a FieldIDn + EntityIDn primary key.
+The table operation:
+	After you select the table and the field you need to define this two fields:
+		DefaultVersionIDn	--> The DefaultVersionIDn is the IDNum of the DefaultVersion, defined in the SysBaseElement_Tbl.
+		FieldDefaultValue	--> The FieldDefaultValue is a value that must be the same type of the field defined in the SysEntityStructure_Tbl.
+	You can define more than one version. 
+	Example: If you have to import some data from two diferent suppliers, you can define two diferent version. 
+			 In the field supplierIDn, you set the specific number of the supplier.
+*/
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- First create the sequence SysEntityStructureFieldDefaultValues_seq
@@ -37,7 +50,6 @@ CREATE TABLE IF NOT EXISTS public."SysEntityStructureFieldDefaultValues_Tbl"
 (
     "IDNum" integer NOT NULL DEFAULT nextval('"SysEntityStructureFieldDefaultValues_Seq"'::regclass),
     "ID" uuid NOT NULL DEFAULT uuid_generate_v4 (),
-    "FieldIDn" integer NOT NULL,
     "DefaultVersionIDn" integer NOT NULL,
     "EntityStructureIDn" integer NOT NULL,
     "FieldDefaultValue" character varying(250) NOT NULL,
@@ -50,7 +62,7 @@ CREATE TABLE IF NOT EXISTS public."SysEntityStructureFieldDefaultValues_Tbl"
     "TableHistory" text COLLATE pg_catalog."default",
     CONSTRAINT "SedvPk_IDNum" PRIMARY KEY ("IDNum"),
     CONSTRAINT "SedvUnique_ID" UNIQUE ("ID"),
-    CONSTRAINT "SedvUnique_IDnFieldEntityStrDefVersion" UNIQUE ("FieldIDn", "DefaultVersionIDn", "EntityStructureIDn")
+    CONSTRAINT "SedvUnique_IDnEntityStrDefVersion" UNIQUE ("DefaultVersionIDn", "EntityStructureIDn")
 )
 
 TABLESPACE pg_default;
@@ -62,18 +74,30 @@ ALTER TABLE IF EXISTS public."SysEntityStructureFieldDefaultValues_Tbl"
 -- Create the comments of the table fields elements
 -- 
 COMMENT ON TABLE public."SysEntityStructureFieldDefaultValues_Tbl"
-    IS 'Contains the system structure. In this table you build the tables and java entities structures, with thiers column and fields.
-You must define all the properties of the entities.
-The primary key: are the union of the columns FieldIDn + EntityIDn + BusinessUnitIDn.';
+    IS 'Contains the default value of each field or column. When you set a value for a column, if the user do not enter, the system get from this table the value to enter.
+The value of the field must be the same type of the field, defined in the SysEntityStructure_Tbl.
+The key for each record:
+	ID		--> is the uniqueidentifier auto generated.
+	IDNum	--> is the autoincrement number auto generated.
+The unique Key is the union of:
+	FieldDefaultValue	--> The value of the Field. The value have to comply the rules of the FieldProperties.
+	DefaultVersionIDn	--> The DefaultVersionIDn is the IDNum of the DefaultVersion, defined in the SysBaseElement_Tbl.
+	EntityStructureIDn	--> The EntityStructureIDn is the IDNum of the entity structure. Link with the SysEntityStructure_Tbl.
+							The EntityStructureIDn has a FieldIDn + EntityIDn primary key.
+The table operation:
+	After you select the table and the field you need to define this two fields:
+		DefaultVersionIDn	--> The DefaultVersionIDn is the IDNum of the DefaultVersion, defined in the SysBaseElement_Tbl.
+		FieldDefaultValue	--> The FieldDefaultValue is a value that must be the same type of the field defined in the SysEntityStructure_Tbl.
+	You can define more than one version. 
+	Example: If you have to import some data from two diferent suppliers, you can define two diferent version. 
+			 In the field supplierIDn, you set the specific number of the supplier.
+';
 
 COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."IDNum"
     IS 'The IDNum is the autoincrement number';
 
 COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."ID"
     IS 'The ID is the uniqueidentifier auto generated V4';
-
-COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."FieldIDn"
-    IS 'The FieldIDn is the IDNum of the field/column of the entity. Link with the SysBaseElement_Tbl.';
 
 COMMENT ON COLUMN public."SysEntityStructureFieldDefaultValues_Tbl"."DefaultVersionIDn"
     IS 'The DefaultVersionIDn is the IDNum of the DefaultVersion, defined in the SysBaseElement_Tbl.';
@@ -114,7 +138,7 @@ COMMENT ON CONSTRAINT "SedvPk_IDNum" ON public."SysEntityStructureFieldDefaultVa
 COMMENT ON CONSTRAINT "SedvUnique_ID" ON public."SysEntityStructureFieldDefaultValues_Tbl"
     IS 'Is the uniqueidentifier';
 
-COMMENT ON CONSTRAINT "SedvUnique_IDnFieldEntityStrDefVersion" ON public."SysEntityStructureFieldDefaultValues_Tbl"
+COMMENT ON CONSTRAINT "SedvUnique_IDnEntityStrDefVersion" ON public."SysEntityStructureFieldDefaultValues_Tbl"
     IS 'A Default Value can be unique in a Entity Structure (FieldIDn + EntityIDn).';
 
 -- #########################################################################################################################################################################################
@@ -190,10 +214,8 @@ BEGIN
 	ELSE
 		v_TableHistoryOld := OLD."TableHistory";
 		v_TableHistory = '';
-		IF NEW."FieldIDn" <> OLD."FieldIDn" THEN v_TableHistory := OLD."FieldIDn"; ELSE v_TableHistory := '†'; END IF;
 		IF NEW."DefaultVersionIDn" <> OLD."DefaultVersionIDn" THEN v_TableHistory := OLD."DefaultVersionIDn"; ELSE v_TableHistory := '†'; END IF;
 		IF NEW."EntityStructureIDn" <> OLD."EntityStructureIDn" THEN v_TableHistory := OLD."EntityStructureIDn"; ELSE v_TableHistory := '†'; END IF;
-		IF NEW."BusinessUnitIDn" <> OLD."BusinessUnitIDn" THEN v_TableHistory := OLD."BusinessUnitIDn"; ELSE v_TableHistory := '†'; END IF;
 		IF NEW."FieldDefaultValue" <> OLD."FieldDefaultValue" THEN v_TableHistory := OLD."FieldDefaultValue"; ELSE v_TableHistory := '†'; END IF;
 		IF NEW."StateIDn" <> OLD."StateIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."StateIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW."CreatedByIDn" <> OLD."CreatedByIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."CreatedByIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
