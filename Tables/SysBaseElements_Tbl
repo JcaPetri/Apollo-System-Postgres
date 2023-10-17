@@ -81,7 +81,7 @@ CREATE TABLE public."SysBaseElements_Tbl"
     CONSTRAINT "SbePk_IDNum" PRIMARY KEY ("IDNum"),
     CONSTRAINT "SbeUnique_ID" UNIQUE ("ID"),
     CONSTRAINT "SbeUnique_IDNameScopeBusUnitLang" UNIQUE ("IDName", "ScopeIDn", "BusinessUnitIDn", "LanguageIDn"),
-    CONSTRAINT "SbeUnique_IDScopeIDCode" UNIQUE ("ScopeIDn", "IDCode")
+    CONSTRAINT "SbeUnique_IDScopeIDCode" UNIQUE ("BusinessUnitIDn", "ScopeIDn", "IDCode")
 );
 
 ALTER TABLE IF EXISTS public."SysBaseElements_Tbl"
@@ -174,8 +174,7 @@ COMMENT ON CONSTRAINT "SbeUnique_IDNameScopeBusUnitLang" ON public."SysBaseEleme
     IS 'A name can be unique for a ScopeId, for a BusinessUnitId, and LanguageId.';
 
 COMMENT ON CONSTRAINT "SbeUnique_IDScopeIDCode" ON public."SysBaseElements_Tbl"
-    IS 'A CodeId can be unique for a ScopeId, for a BusinessUnitId.
-Thats mean, you can''t duplicate the CodeId for one scope.';
+    IS 'A CodeId can be unique for a ScopeId and for a BusinessUnitId.';
 
 -- #########################################################################################################################################################################################
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
