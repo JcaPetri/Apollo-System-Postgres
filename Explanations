@@ -97,7 +97,10 @@ Detailed explanation of each table.
 			Contains the other element of the system. 
 			When you enter the IDNum in this table, you active the element to be used in other microservices. 
 			The key for each record:
-				This table hasn't its own key.
+				ID		--> is the uniqueidentifier auto generated.
+				IDNum	--> is the autoincrement number auto generated.
+				This table has its own key only for update it. 
+				The system don't use this key because, here we only enable the element to a Microservice and BusinessUnit.
 			The unique Key is the union of:
 				RootElementIDn 		--> the IdNum of the entity
 				MicroserviceIDn		--> the IdNum of the Microservice that the Entity belong. When is equal System, all microservices of the BusinessUnit have access to them.
