@@ -255,9 +255,8 @@ BEGIN
 	ELSE
 		v_TableHistoryOld := OLD."TableHistory";
 		v_TableHistory = '';
-		-- "IDNum", no cambia es autonumerico de la tabla
-		-- "ID", no cambia es unique Identifier
-		-- "IDName"
+		-- "IDNum", this value never changes.
+		-- "ID", this value never changes.
 		IF NEW."IDName" <> OLD."IDName" THEN v_TableHistory := OLD."IDName"; ELSE v_TableHistory := '†'; END IF;
 		IF NEW."IDNameStructureIDn" <> OLD."IDNameStructureIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."IDNameStructureIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
 		IF NEW."ScopeIDn" <> OLD."ScopeIDn" THEN v_TableHistory := CONCAT(v_TableHistory,'†',OLD."ScopeIDn"); ELSE v_TableHistory := CONCAT(v_TableHistory,'†'); END IF;
